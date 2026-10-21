@@ -5,9 +5,11 @@ everything else is the contract and should stay as it is.
 
 ## The contract (every widget must satisfy)
 
-1. **One custom element, one file.** `widgets/of-<id>/component.js` is an ES module with **no imports**
-   that defines exactly one element `of-<id>`. No globals, no document-level ids; all DOM lives in a
-   shadow root.
+1. **One custom element, one file.** `widgets/of-<id>/component.js` is a plain script **wrapped in an
+   IIFE** (`(() => { ... })();`) with **no imports and no exports**, defining exactly one element
+   `of-<id>`. It therefore loads both as a classic `<script src>` (works from `file://` — Chrome and
+   Edge block ES-module imports there, which is why the first demo rendered an empty page) and via the
+   library page's dynamic `import()`. No globals, no document-level ids; all DOM lives in a shadow root.
 2. **Two attributes.** `lang` (`en` default, `ru`; `ar` reserved — the host selector `:host([lang="ar"])`
    already flips direction) and `config` (a JSON string). A missing or invalid `config` falls back to
    the module's `DEFAULT_CONFIG` and logs nothing above `console.warn`.
@@ -34,8 +36,8 @@ everything else is the contract and should stay as it is.
 
 1. **Copy** `widgets/of-template/` → `staging/of-<id>/`. Pick the id from the catalog (kebab-case,
    no version suffix).
-2. **Rename** — in `component.js` change `TAG`, the class name and the export; in `index.html` change
-   the tag names and the import stays `./component.js`.
+2. **Rename** — in `component.js` change `TAG` and the class name; in `index.html` change the tag
+   names and keep `<script src="./component.js">`.
 3. **Model** — replace `DEFAULT_CONFIG` with your parameters (keep types primitive so the JSON config
    round-trips), and `_draw()` with your computation + drawing. Keep `_parseConfig`, `getConfig`,
    `_onInput`, `_scheduleDraw` as they are; they are the contract.

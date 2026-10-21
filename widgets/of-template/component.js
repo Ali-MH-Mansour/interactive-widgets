@@ -1,7 +1,8 @@
 // <of-template> — the reference widget. A slider-driven line plot: y = a·x + b.
 // Copy this folder to start a new widget; see docs/widget-authoring.md for the contract.
-// ES module, no imports, no globals, everything inside a shadow root.
-
+// Plain script wrapped in an IIFE: loads as <script src> from file:// AND as an ES module import.
+// No imports, no exports, no globals; everything inside a shadow root.
+(() => {
 const TAG = 'of-template';
 
 const DEFAULT_CONFIG = Object.freeze({
@@ -195,4 +196,4 @@ class OfTemplate extends HTMLElement {
 }
 
 if (!customElements.get(TAG)) customElements.define(TAG, OfTemplate);
-export { OfTemplate, DEFAULT_CONFIG, TAG };
+})();

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lecture — regression, classification, trees, clustering</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body { padding: 24px; max-width: 960px; margin: auto; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    section { margin-block: 28px; display: grid; gap: 10px; }
+    h2 { margin: 0; } p { margin: 0; color: var(--text-muted); }
+    .lang-switch button[aria-pressed="true"] { background: var(--accent); color: #0f1216; border-color: var(--accent); }
+    nav a { margin-inline-end: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Regression → classification → trees → clustering</h1>
+    <div class="lang-switch" role="group" aria-label="Widget language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button></div>
+  </header>
+  <nav class="muted"><a href="#fit">1 Line + MSE</a><a href="#gd">2 Gradient descent</a><a href="#logit">3 Logistic regression</a><a href="#nb">4 Naive Bayes</a><a href="#tree">5 Decision tree</a><a href="#km">6 k-means</a></nav>
+
+  <section id="fit"><h2>1. A model is a line; the error is MSE</h2>
+    <p>Fit the line by hand. The residual bars are what the model gets wrong; MSE is their mean square. Then show the least-squares line: the best any line can do.</p>
+    <of-linear-fit lang="en"></of-linear-fit></section>
+
+  <section id="gd"><h2>2. Gradient descent adjusts the weights</h2>
+    <p>Instead of guessing w and b, compute the gradient of the MSE and step against it. Watch the update formula with real numbers, then raise η until it diverges.</p>
+    <of-gd-linear-regression lang="en"></of-gd-linear-regression></section>
+
+  <section id="logit"><h2>3. Logistic regression: learning to separate two classes</h2>
+    <p>Same idea, different loss: the line is now a boundary, the sigmoid turns the score into a probability, and gradient descent on the log-loss rotates the line into place.</p>
+    <of-logistic-regression lang="en"></of-logistic-regression></section>
+
+  <section id="nb"><h2>4. Naive Bayes: classify by probabilities</h2>
+    <p>No boundary is learned directly: each class gets a mean and variance per feature, and Bayes' rule combines prior and likelihoods into a posterior for any point.</p>
+    <of-naive-bayes lang="en"></of-naive-bayes></section>
+
+  <section id="tree"><h2>5. Decision tree: split and gain</h2>
+    <p>A tree asks threshold questions. Choose the root split yourself, read Gini or entropy of parent and children and the gain, then let the tree grow deeper.</p>
+    <of-tree-split lang="en" config='{"depth": 2}'></of-tree-split></section>
+
+  <section id="km"><h2>6. k-means: clustering without labels</h2>
+    <p>Two steps, alternating: assign points to the nearest centroid, move centroids to their means. Inertia only falls; restart to see a different local optimum.</p>
+    <of-kmeans-steps lang="en"></of-kmeans-steps></section>
+
+  <script src="../widgets/of-linear-fit/component.js"></script>
+  <script src="../widgets/of-gd-linear-regression/component.js"></script>
+  <script src="../widgets/of-logistic-regression/component.js"></script>
+  <script src="../widgets/of-naive-bayes/component.js"></script>
+  <script src="../widgets/of-tree-split/component.js"></script>
+  <script src="../widgets/of-kmeans-steps/component.js"></script>
+  <script>
+    document.querySelectorAll('.lang-switch button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('.lang-switch button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      document.querySelectorAll('[lang]').forEach((el) => { if (el.tagName.startsWith('OF-')) el.setAttribute('lang', b.dataset.lang); });
+    }));
+  </script>
+</body>
+</html>

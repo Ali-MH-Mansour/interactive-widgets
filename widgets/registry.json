@@ -1,30 +1,273 @@
 {
   "schema_version": "1.0.0",
   "vocabulary": {
-    "topics": ["machine-learning", "math-foundations", "programming", "artificial-intelligence"],
-    "domains": ["ml", "math", "programming", "ai"],
-    "languages": ["en", "ru"],
-    "statuses": ["published", "planned"]
+    "topics": [
+      "machine-learning",
+      "math-foundations",
+      "programming",
+      "artificial-intelligence"
+    ],
+    "domains": [
+      "ml",
+      "math",
+      "programming",
+      "ai"
+    ],
+    "languages": [
+      "en",
+      "ru"
+    ],
+    "statuses": [
+      "published",
+      "planned"
+    ]
   },
   "widgets": [
     {
       "id": "of-template",
       "status": "published",
-      "title_i18n": { "en": "Line plot template (y = a·x + b)", "ru": "Шаблон: график прямой (y = a·x + b)" },
+      "title_i18n": {
+        "en": "Line plot template (y = a·x + b)",
+        "ru": "Шаблон: график прямой (y = a·x + b)"
+      },
       "description_i18n": {
         "en": "The reference widget every new one is copied from: two sliders move a line on a plot and the equation updates live.",
         "ru": "Эталонный виджет, с которого копируются новые: два ползунка двигают прямую на графике, уравнение обновляется сразу."
       },
       "topic": "math-foundations",
       "concept": "linear-function",
-      "domains": ["math", "programming"],
-      "tags": ["template", "linear-function", "slope", "intercept"],
+      "domains": [
+        "math",
+        "programming"
+      ],
+      "tags": [
+        "template",
+        "linear-function",
+        "slope",
+        "intercept"
+      ],
+      "prerequisites": [],
+      "difficulty": 1,
+      "version": "0.1.1",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-template/preview.png"
+    },
+    {
+      "id": "of-linear-fit",
+      "status": "published",
+      "title_i18n": {
+        "en": "Fit a line by hand: residuals and MSE",
+        "ru": "Подберите прямую вручную: остатки и MSE"
+      },
+      "description_i18n": {
+        "en": "Move w and b over a scatter, see the residual bars and the mean squared error change live; compare with the least-squares line.",
+        "ru": "Двигайте w и b над облаком точек, смотрите, как меняются остатки и среднеквадратичная ошибка; сравните с МНК-прямой."
+      },
+      "topic": "machine-learning",
+      "concept": "linear-regression",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "regression",
+        "mse",
+        "residuals",
+        "least-squares"
+      ],
       "prerequisites": [],
       "difficulty": 1,
       "version": "0.1.0",
       "author": "Ali Mansour",
       "created": "2026-10-21",
-      "preview": "widgets/of-template/preview.png"
+      "preview": "widgets/of-linear-fit/preview.png",
+      "demo_config": {
+        "w": 2,
+        "b": 1,
+        "showBest": true
+      }
+    },
+    {
+      "id": "of-gd-linear-regression",
+      "status": "published",
+      "title_i18n": {
+        "en": "Gradient descent learns a line",
+        "ru": "Градиентный спуск учит прямую"
+      },
+      "description_i18n": {
+        "en": "Step through gradient descent on the MSE of a line: gradient, weight update with real numbers, the line settling and the loss curve; raise the learning rate until it diverges.",
+        "ru": "Пошаговый градиентный спуск по MSE прямой: градиент, обновление весов с числами, прямая устанавливается, кривая потерь; увеличьте скорость обучения до расхождения."
+      },
+      "topic": "machine-learning",
+      "concept": "gradient-descent",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "gradient-descent",
+        "learning-rate",
+        "weight-update",
+        "mse"
+      ],
+      "prerequisites": [
+        "of-linear-fit"
+      ],
+      "difficulty": 2,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-gd-linear-regression/preview.png",
+      "demo_config": {
+        "lr": 0.3,
+        "w0": 4,
+        "b0": -4
+      }
+    },
+    {
+      "id": "of-logistic-regression",
+      "status": "published",
+      "title_i18n": {
+        "en": "Logistic regression: learning to separate",
+        "ru": "Логистическая регрессия: учимся разделять"
+      },
+      "description_i18n": {
+        "en": "Two classes, a sigmoid probability surface and the decision boundary; move the weights by hand or let gradient descent on the log-loss learn them step by step.",
+        "ru": "Два класса, сигмоидная поверхность вероятности и граница решения; двигайте веса вручную или дайте градиентному спуску по log-loss выучить их шаг за шагом."
+      },
+      "topic": "machine-learning",
+      "concept": "logistic-regression",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "classification",
+        "sigmoid",
+        "decision-boundary",
+        "log-loss",
+        "gradient-descent"
+      ],
+      "prerequisites": [
+        "of-linear-fit"
+      ],
+      "difficulty": 2,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-logistic-regression/preview.png",
+      "demo_config": {
+        "w1": 0.2,
+        "w2": -0.3,
+        "b": 0,
+        "lr": 1
+      }
+    },
+    {
+      "id": "of-naive-bayes",
+      "status": "published",
+      "title_i18n": {
+        "en": "Naive Bayes classifier",
+        "ru": "Наивный байесовский классификатор"
+      },
+      "description_i18n": {
+        "en": "Gaussian naive Bayes on two features: move a test point and read prior × likelihoods → posterior with the numbers filled in; decision regions behind the data.",
+        "ru": "Гауссовский наивный Байес по двум признакам: двигайте тестовую точку и читайте априорная × правдоподобия → апостериорная с числами; области решения за данными."
+      },
+      "topic": "machine-learning",
+      "concept": "naive-bayes",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "bayes",
+        "probability",
+        "classification",
+        "gaussian"
+      ],
+      "prerequisites": [],
+      "difficulty": 2,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-naive-bayes/preview.png",
+      "demo_config": {
+        "x1": -2,
+        "x2": 2,
+        "n": 50
+      }
+    },
+    {
+      "id": "of-tree-split",
+      "status": "published",
+      "title_i18n": {
+        "en": "Decision tree: split and gain",
+        "ru": "Дерево решений: разбиение и выигрыш"
+      },
+      "description_i18n": {
+        "en": "Pick the root split on a 2-D point set and read Gini or entropy of parent and children and the information gain; deeper levels grow greedily, regions and tree shown.",
+        "ru": "Выберите разбиение корня на 2-D точках и читайте Джини или энтропию родителя и детей и выигрыш; глубже дерево растёт жадно, показаны области и дерево."
+      },
+      "topic": "machine-learning",
+      "concept": "decision-tree",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "decision-tree",
+        "gini",
+        "entropy",
+        "information-gain"
+      ],
+      "prerequisites": [],
+      "difficulty": 2,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-tree-split/preview.png",
+      "demo_config": {
+        "feature": 1,
+        "threshold": 1,
+        "depth": 3,
+        "criterion": "entropy"
+      }
+    },
+    {
+      "id": "of-kmeans-steps",
+      "status": "published",
+      "title_i18n": {
+        "en": "k-means step by step",
+        "ru": "k-средних шаг за шагом"
+      },
+      "description_i18n": {
+        "en": "Assign and Update one at a time: points recolour to the nearest centroid, centroids move to their means, inertia falls until the assignments stop changing.",
+        "ru": "«Назначить» и «Обновить» по очереди: точки красятся в ближайший центроид, центроиды идут в свои средние, инерция падает, пока назначения не перестанут меняться."
+      },
+      "topic": "machine-learning",
+      "concept": "clustering",
+      "domains": [
+        "ml"
+      ],
+      "tags": [
+        "k-means",
+        "clustering",
+        "unsupervised",
+        "centroid"
+      ],
+      "prerequisites": [],
+      "difficulty": 1,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-kmeans-steps/preview.png",
+      "demo_config": {
+        "k": 4,
+        "blobs": 4,
+        "n": 80
+      }
     }
   ]
 }

@@ -31,10 +31,12 @@ to start any new widget — see `docs/widget-authoring.md`.
 Embed:
 
 ```html
-<script type="module" src="widgets/of-template/component.js"></script>
+<script src="widgets/of-template/component.js"></script>
 <of-template lang="ru" config='{"a": -2, "b": 3}'></of-template>
 ```
 
 ## Changelog
+
+- 0.1.1 (2026-10-21) — wrapped in an IIFE, no `export`: Chrome/Edge block ES-module imports from `file://`, so the demo page rendered nothing; the demo and the embed snippet now use a classic `<script src>`.
 
 - 0.1.0 (2026-10-21) — first version: slope and intercept sliders, EN/RU strings, config round-trip.
