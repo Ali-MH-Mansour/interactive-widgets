@@ -57,3 +57,7 @@ do not need a server — open `widgets/of-template/index.html` directly to see o
 
 This repository is independent of BrainCore / ASI OS. The planning record (catalog, work plan,
 decision log) lives in the ASI OS activity `ACT-00069`; see `PROJECT.md`.
+
+## Lecture pages
+
+`lessons/ml-models-lecture.html` — six widgets in teaching order (line + MSE → gradient descent → logistic regression → naive Bayes → decision tree → k-means), opens from `file://`, EN/RU toggle. Previews: `python tools/make-previews.py` (headless Edge/Chrome); demo pages: `python tools/gen-widget-pages.py`.

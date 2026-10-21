@@ -61,3 +61,9 @@ Also required on disk for a `published` entry: `widgets/<id>/component.js` (erro
   "preview": "widgets/of-sigmoid/preview.png"
 }
 ```
+
+## Optional keys (added 2026-10-21)
+
+| Key | Type | Meaning |
+| --- | --- | --- |
+| `demo_config` | object | the custom config shown as the second (RU) instance on the widget's generated `index.html` (`tools/gen-widget-pages.py`) |
