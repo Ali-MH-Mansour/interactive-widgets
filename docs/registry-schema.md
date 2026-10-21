@@ -37,6 +37,8 @@ deliberate edit here, never an ad-hoc value on an entry.
 | `created` | `YYYY-MM-DD` | yes | First publish date (draft date while `planned`). |
 | `preview` | path | yes when published | Relative to the repo root; a 640×400 PNG of the default state. Must exist. |
 | `used_in` | string[] | no | Lesson ids that embed the widget (filled by the renderer in Phase 3). |
+| `concept_order` | integer ≥ 1 | no | Position of the widget inside its concept kit (`widgets/concepts.json`); must equal its index in the kit's `parts`. |
+| `concept_role` | string | no | What the widget contributes to the concept: one of `vocabulary.roles` — `foundation` (a quantity the concept rests on), `mechanism` (one step of the method), `algorithm` (the whole method running), `application` (using the result), `pitfall` (what goes wrong), `extension` (a variant). |
 
 Also required on disk for a `published` entry: `widgets/<id>/component.js` (error if missing),
 `widgets/<id>/README.md` (warning if missing) and `widgets/<id>/explain.js` (warning if missing; error if
@@ -69,3 +71,41 @@ present but invalid — `docs/explain-schema.md`). The derived graph (`python to
 | Key | Type | Meaning |
 | --- | --- | --- |
 | `demo_config` | object | the custom config shown as the second (RU) instance on the widget's generated `index.html` (`tools/gen-widget-pages.py`) |
+
+## Concept kits — `widgets/concepts.json`
+
+A **concept kit** is the set of widgets that together teach one concept, in teaching order — the answer to
+"can a concept be split into several small widgets that are still one unit?" (decision-tree kit, 2026-10-21).
+The link between the parts is **metadata only**: no widget knows about another at run time; the registry,
+this file and the derived graph carry the structure.
+
+```json
+{
+  "schema_version": "1.0.0",
+  "concepts": [
+    {
+      "id": "decision-tree",
+      "topic": "machine-learning",
+      "title_i18n": { "en": "Decision trees", "ru": "Деревья решений" },
+      "summary_i18n": { "en": "…", "ru": "…" },
+      "parts": ["of-impurity-calculator", "of-split-gain", "of-tree-split", "of-tree-predict", "of-tree-depth-overfit", "of-regression-tree"],
+      "related": ["of-naive-bayes", "of-logistic-regression"]
+    }
+  ]
+}
+```
+
+| Field | Rule |
+| --- | --- |
+| `id` | The `concept` slug the parts carry in the registry. One record per concept at most. |
+| `topic` | One of `vocabulary.topics`. |
+| `title_i18n`, `summary_i18n` | Every language in `vocabulary.languages`. |
+| `parts` | **Ordered** widget ids, all with `concept` = this id; every registry widget with this concept must be listed (the validator refuses a stray one). A part may be `status: planned` — the kit is designed before it is built and the graph draws the planned parts hollow. |
+| `related` | Widget ids of neighbouring concepts (drawn as `related` edges from the concept node). |
+
+What the kit gives for free: the library page can show a **concept page** (summary, the parts in order with
+their role, progress through them), `graph.json` carries `part-of` edges with `order` and `role`, the lesson
+renderer can generate a default lesson for a concept (one `widget` + `explain` block per part, in order),
+and a lecture that embeds part *k* can warn when parts *1..k-1* appear in no earlier lecture. The
+`prerequisites[]` of the parts should still chain them (part *k* lists part *k-1*), so the learning-path
+view and the kit agree.

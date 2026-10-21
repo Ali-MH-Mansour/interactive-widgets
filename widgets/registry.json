@@ -20,6 +20,14 @@
     "statuses": [
       "published",
       "planned"
+    ],
+    "roles": [
+      "foundation",
+      "mechanism",
+      "algorithm",
+      "application",
+      "pitfall",
+      "extension"
     ]
   },
   "widgets": [
@@ -222,7 +230,9 @@
         "entropy",
         "information-gain"
       ],
-      "prerequisites": [],
+      "prerequisites": [
+        "of-split-gain"
+      ],
       "difficulty": 2,
       "version": "0.1.0",
       "author": "Ali Mansour",
@@ -233,7 +243,9 @@
         "threshold": 1,
         "depth": 3,
         "criterion": "entropy"
-      }
+      },
+      "concept_order": 3,
+      "concept_role": "algorithm"
     },
     {
       "id": "of-kmeans-steps",
@@ -308,6 +320,168 @@
         "shape": "skewed",
         "x": 2.4
       }
+    },
+    {
+      "id": "of-impurity-calculator",
+      "status": "planned",
+      "title_i18n": {
+        "en": "Impurity of one node",
+        "ru": "Нечистота одного узла"
+      },
+      "description_i18n": {
+        "en": "Set the class counts of a node with sliders and read its Gini and entropy with the formula filled in; see both reach 0 for a pure node and their maximum at a 50/50 mix.",
+        "ru": "Задайте ползунками число объектов каждого класса в узле и прочитайте Джини и энтропию с подставленными числами; обе равны 0 для чистого узла и максимальны при смеси 50/50."
+      },
+      "topic": "machine-learning",
+      "concept": "decision-tree",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "decision-tree",
+        "gini",
+        "entropy",
+        "impurity"
+      ],
+      "prerequisites": [],
+      "difficulty": 1,
+      "version": "0.0.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "concept_order": 1,
+      "concept_role": "foundation"
+    },
+    {
+      "id": "of-split-gain",
+      "status": "planned",
+      "title_i18n": {
+        "en": "One split and its gain",
+        "ru": "Одно разбиение и его прирост"
+      },
+      "description_i18n": {
+        "en": "Slide one threshold along one feature of a 1-D or 2-D point set and watch the two children, their impurities and the information gain; the gain curve along the feature shows why the best threshold is where it is.",
+        "ru": "Двигайте один порог по одному признаку и смотрите на двух потомков, их нечистоту и информационный прирост; кривая прироста вдоль признака показывает, почему лучший порог именно там."
+      },
+      "topic": "machine-learning",
+      "concept": "decision-tree",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "decision-tree",
+        "information-gain",
+        "threshold",
+        "split"
+      ],
+      "prerequisites": [
+        "of-impurity-calculator"
+      ],
+      "difficulty": 2,
+      "version": "0.0.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "concept_order": 2,
+      "concept_role": "mechanism"
+    },
+    {
+      "id": "of-tree-predict",
+      "status": "planned",
+      "title_i18n": {
+        "en": "Predict with a tree: trace a point",
+        "ru": "Предсказание деревом: путь точки"
+      },
+      "description_i18n": {
+        "en": "Drag a test point and follow it down the built tree: each node's question lights up, the path to the leaf is highlighted and the leaf's class vote becomes the prediction.",
+        "ru": "Перетащите тестовую точку и проследите её путь по построенному дереву: вопрос каждого узла подсвечивается, путь до листа выделяется, голос листа становится предсказанием."
+      },
+      "topic": "machine-learning",
+      "concept": "decision-tree",
+      "domains": [
+        "ml"
+      ],
+      "tags": [
+        "decision-tree",
+        "prediction",
+        "inference",
+        "path"
+      ],
+      "prerequisites": [
+        "of-tree-split"
+      ],
+      "difficulty": 1,
+      "version": "0.0.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "concept_order": 4,
+      "concept_role": "application"
+    },
+    {
+      "id": "of-tree-depth-overfit",
+      "status": "planned",
+      "title_i18n": {
+        "en": "Depth vs overfitting",
+        "ru": "Глубина и переобучение"
+      },
+      "description_i18n": {
+        "en": "Grow the tree deeper and watch the regions fragment while training accuracy climbs and test accuracy falls; min samples per leaf and noise level show when a leaf is memorising.",
+        "ru": "Увеличивайте глубину дерева и смотрите, как области дробятся, точность на обучении растёт, а на тесте падает; минимальный размер листа и уровень шума показывают, когда лист запоминает шум."
+      },
+      "topic": "machine-learning",
+      "concept": "decision-tree",
+      "domains": [
+        "ml"
+      ],
+      "tags": [
+        "decision-tree",
+        "overfitting",
+        "generalisation",
+        "depth"
+      ],
+      "prerequisites": [
+        "of-tree-split"
+      ],
+      "difficulty": 3,
+      "version": "0.0.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "concept_order": 5,
+      "concept_role": "pitfall"
+    },
+    {
+      "id": "of-regression-tree",
+      "status": "planned",
+      "title_i18n": {
+        "en": "Tree on a regression target",
+        "ru": "Дерево для регрессии"
+      },
+      "description_i18n": {
+        "en": "The same greedy splits on a 1-D numeric target: a piecewise-constant prediction over the scatter, MSE per leaf instead of impurity, depth and thresholds adjustable.",
+        "ru": "Те же жадные разбиения для числовой цели: кусочно-постоянное предсказание над точками, MSE в листе вместо нечистоты, глубина и пороги регулируются."
+      },
+      "topic": "machine-learning",
+      "concept": "decision-tree",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "decision-tree",
+        "regression",
+        "mse",
+        "piecewise"
+      ],
+      "prerequisites": [
+        "of-tree-split",
+        "of-linear-fit"
+      ],
+      "difficulty": 3,
+      "version": "0.0.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "concept_order": 6,
+      "concept_role": "extension"
     }
   ]
 }

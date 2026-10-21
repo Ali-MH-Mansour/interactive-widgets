@@ -13,6 +13,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REG = json.loads((ROOT / "widgets" / "registry.json").read_text(encoding="utf-8"))
 LANGS = REG["vocabulary"]["languages"]
+CONCEPTS_PATH = ROOT / "widgets" / "concepts.json"
+KITS = {c["id"]: c for c in json.loads(CONCEPTS_PATH.read_text(encoding="utf-8"))["concepts"]} if CONCEPTS_PATH.exists() else {}
 REQUIRED = ("summary", "concept", "how_to_use")
 SPAN = re.compile(r"/\*\s*JSON-START\s*\*/(.*?)/\*\s*JSON-END\s*\*/", re.S)
 
@@ -80,13 +82,36 @@ def main():
                             edges.append({"from": w["id"], "to": tid, "kind": "related"})
         nodes.append(node)
     nodes[len(REG["vocabulary"]["topics"]):len(REG["vocabulary"]["topics"])] = list(concepts.values())
+    # Concept kits: an ordered list of parts on the concept node, one part-of edge per part (with order and role),
+    # and related edges from the kit to neighbouring concepts' widgets.
+    byid = {w["id"]: w for w in REG["widgets"]}
+    for cid, kit in KITS.items():
+        if cid not in concepts:
+            errors.append(f"concept:{cid}: kit has no widget in the registry")
+            continue
+        node = concepts[cid]
+        node["label_i18n"] = kit["title_i18n"]
+        node["summary_i18n"] = kit["summary_i18n"]
+        node["parts"] = list(kit["parts"])
+        for i, pid in enumerate(kit["parts"], start=1):
+            w = byid.get(pid)
+            if w is None:
+                errors.append(f"concept:{cid}: part {pid!r} is not a widget id")
+                continue
+            edges.append({"from": pid, "to": f"concept:{cid}", "kind": "part-of", "order": i,
+                          "role": w.get("concept_role"), "status": w.get("status", "published")})
+        for rid in kit.get("related", []):
+            if rid not in ids:
+                errors.append(f"concept:{cid}: related {rid!r} is not a widget id")
+            else:
+                edges.append({"from": f"concept:{cid}", "to": rid, "kind": "related"})
     for wmsg in warnings:
         print(f"warning: {wmsg}")
     if errors:
         for e in errors:
             print(f"error: {e}")
         sys.exit(1)
-    graph = {"schema_version": "1.0.0", "generated_from": ["widgets/registry.json", "widgets/*/explain.js"],
+    graph = {"schema_version": "1.0.0", "generated_from": ["widgets/registry.json", "widgets/concepts.json", "widgets/*/explain.js"],
              "nodes": nodes, "edges": edges}
     if not check:
         (ROOT / "graph.json").write_text(json.dumps(graph, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

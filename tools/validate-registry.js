@@ -26,6 +26,7 @@ const TOPICS = vocab.topics || [];
 const DOMAINS = vocab.domains || [];
 const LANGS = vocab.languages || ['en', 'ru'];
 const STATUSES = vocab.statuses || ['published', 'planned'];
+const ROLES = vocab.roles || ['foundation', 'mechanism', 'algorithm', 'application', 'pitfall', 'extension'];
 
 if (!Array.isArray(reg.widgets)) { console.error('registry: "widgets" must be an array'); process.exit(1); }
 for (const key of ['topics', 'domains', 'languages']) {
@@ -91,6 +92,9 @@ for (const w of reg.widgets) {
 
   if (!Array.isArray(w.prerequisites)) err(id, 'prerequisites must be an array of widget ids');
   if (!Number.isInteger(w.difficulty) || w.difficulty < 1 || w.difficulty > 5) err(id, 'difficulty must be an integer 1..5');
+  // Concept-kit fields (docs/registry-schema.md, concept kits): optional, but when present they must be sane.
+  if (w.concept_order !== undefined && (!Number.isInteger(w.concept_order) || w.concept_order < 1)) err(id, 'concept_order must be an integer >= 1');
+  if (w.concept_role !== undefined && !ROLES.includes(w.concept_role)) err(id, `concept_role "${w.concept_role}" not in vocabulary.roles`);
   if (typeof w.version !== 'string' || !SEMVER_RE.test(w.version)) err(id, 'version must be semver x.y.z');
   if (typeof w.author !== 'string' || w.author.trim() === '') err(id, 'author must be a non-empty string');
   if (typeof w.created !== 'string' || !DATE_RE.test(w.created)) err(id, 'created must be YYYY-MM-DD');
@@ -124,10 +128,43 @@ function dfs(id, trail) {
 }
 for (const id of ids) dfs(id, []);
 
+// Concept kits (widgets/concepts.json): a concept record names its ordered parts; every registry widget of that
+// concept must be a part and every part must be a registry widget of that concept. Missing file = no kits.
+const conceptsFile = path.join(path.dirname(file), 'concepts.json');
+let kitCount = 0;
+if (fs.existsSync(conceptsFile)) {
+  let kits;
+  try { kits = JSON.parse(fs.readFileSync(conceptsFile, 'utf8')); } catch (e) { err('concepts', `concepts.json does not parse: ${e.message}`); kits = { concepts: [] }; }
+  const kitIds = new Set();
+  for (const c of kits.concepts || []) {
+    const cid = typeof c.id === 'string' ? c.id : '<no id>';
+    const tag = `concept:${cid}`;
+    if (!KEBAB_RE.test(cid)) err(tag, 'concept id must be kebab-case');
+    if (kitIds.has(cid)) err(tag, 'duplicate concept id');
+    kitIds.add(cid); kitCount++;
+    if (!TOPICS.includes(c.topic)) err(tag, `topic "${c.topic}" not in vocabulary.topics`);
+    checkI18n(tag, 'title_i18n', c.title_i18n);
+    checkI18n(tag, 'summary_i18n', c.summary_i18n);
+    if (!Array.isArray(c.parts) || c.parts.length === 0) { err(tag, 'parts must be a non-empty array of widget ids'); continue; }
+    const seen = new Set();
+    c.parts.forEach((pid, i) => {
+      if (seen.has(pid)) err(tag, `part "${pid}" listed twice`);
+      seen.add(pid);
+      const w = byId.get(pid);
+      if (!w) { err(tag, `part "${pid}" is not a widget id in the registry`); return; }
+      if (w.concept !== cid) err(tag, `part "${pid}" has concept "${w.concept}", not "${cid}"`);
+      if (w.concept_order !== undefined && w.concept_order !== i + 1) err(tag, `part "${pid}" is at position ${i + 1} but carries concept_order ${w.concept_order}`);
+      if (w.concept_role === undefined) warn.push(`${tag}: part "${pid}" has no concept_role`);
+    });
+    for (const w of reg.widgets) if (w.concept === cid && !seen.has(w.id)) err(tag, `widget "${w.id}" has this concept but is not in parts`);
+    for (const r of c.related || []) if (!ids.has(r)) err(tag, `related "${r}" is not a widget id in the registry`);
+  }
+}
+
 for (const w of warn) console.warn(`warning: ${w}`);
 if (errors.length) {
   for (const e of errors) console.error(`error: ${e}`);
   console.error(`\n${errors.length} error(s) in ${path.relative(ROOT, file)}`);
   process.exit(1);
 }
-console.log(`ok: ${reg.widgets.length} widget(s) valid in ${path.relative(ROOT, file)}`);
+console.log(`ok: ${reg.widgets.length} widget(s) valid in ${path.relative(ROOT, file)}, ${kitCount} concept kit(s)`);

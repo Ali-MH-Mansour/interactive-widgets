@@ -2,6 +2,7 @@
  "schema_version": "1.0.0",
  "generated_from": [
   "widgets/registry.json",
+  "widgets/concepts.json",
   "widgets/*/explain.js"
  ],
  "nodes": [
@@ -59,7 +60,23 @@
    "id": "concept:decision-tree",
    "kind": "concept",
    "label": "decision-tree",
-   "topic": "machine-learning"
+   "topic": "machine-learning",
+   "label_i18n": {
+    "en": "Decision trees",
+    "ru": "Деревья решений"
+   },
+   "summary_i18n": {
+    "en": "How a tree asks threshold questions, why it picks each question (impurity and gain), how it grows greedily, how a point is classified, and when depth turns into memorising.",
+    "ru": "Как дерево задаёт пороговые вопросы, почему выбирает именно их (нечистота и прирост), как растёт жадно, как классифицируется точка и когда глубина превращается в запоминание."
+   },
+   "parts": [
+    "of-impurity-calculator",
+    "of-split-gain",
+    "of-tree-split",
+    "of-tree-predict",
+    "of-tree-depth-overfit",
+    "of-regression-tree"
+   ]
   },
   {
    "id": "concept:clustering",
@@ -223,6 +240,94 @@
    "version": "0.1.0",
    "explain": true,
    "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-impurity-calculator",
+   "kind": "widget",
+   "label": {
+    "en": "Impurity of one node",
+    "ru": "Нечистота одного узла"
+   },
+   "concept": "decision-tree",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 1,
+   "status": "planned",
+   "version": "0.0.0",
+   "explain": false
+  },
+  {
+   "id": "of-split-gain",
+   "kind": "widget",
+   "label": {
+    "en": "One split and its gain",
+    "ru": "Одно разбиение и его прирост"
+   },
+   "concept": "decision-tree",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 2,
+   "status": "planned",
+   "version": "0.0.0",
+   "explain": false
+  },
+  {
+   "id": "of-tree-predict",
+   "kind": "widget",
+   "label": {
+    "en": "Predict with a tree: trace a point",
+    "ru": "Предсказание деревом: путь точки"
+   },
+   "concept": "decision-tree",
+   "topic": "machine-learning",
+   "domains": [
+    "ml"
+   ],
+   "difficulty": 1,
+   "status": "planned",
+   "version": "0.0.0",
+   "explain": false
+  },
+  {
+   "id": "of-tree-depth-overfit",
+   "kind": "widget",
+   "label": {
+    "en": "Depth vs overfitting",
+    "ru": "Глубина и переобучение"
+   },
+   "concept": "decision-tree",
+   "topic": "machine-learning",
+   "domains": [
+    "ml"
+   ],
+   "difficulty": 3,
+   "status": "planned",
+   "version": "0.0.0",
+   "explain": false
+  },
+  {
+   "id": "of-regression-tree",
+   "kind": "widget",
+   "label": {
+    "en": "Tree on a regression target",
+    "ru": "Дерево для регрессии"
+   },
+   "concept": "decision-tree",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 3,
+   "status": "planned",
+   "version": "0.0.0",
+   "explain": false
   }
  ],
  "edges": [
@@ -342,6 +447,11 @@
    "kind": "has-widget"
   },
   {
+   "from": "of-split-gain",
+   "to": "of-tree-split",
+   "kind": "prerequisite"
+  },
+  {
    "from": "of-tree-split",
    "to": "of-logistic-regression",
    "kind": "related"
@@ -384,6 +494,114 @@
   {
    "from": "of-quantization",
    "to": "of-linear-fit",
+   "kind": "related"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-impurity-calculator",
+   "kind": "has-widget"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-split-gain",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-impurity-calculator",
+   "to": "of-split-gain",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-tree-predict",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-tree-split",
+   "to": "of-tree-predict",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-tree-depth-overfit",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-tree-split",
+   "to": "of-tree-depth-overfit",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-regression-tree",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-tree-split",
+   "to": "of-regression-tree",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "of-linear-fit",
+   "to": "of-regression-tree",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "of-impurity-calculator",
+   "to": "concept:decision-tree",
+   "kind": "part-of",
+   "order": 1,
+   "role": "foundation",
+   "status": "planned"
+  },
+  {
+   "from": "of-split-gain",
+   "to": "concept:decision-tree",
+   "kind": "part-of",
+   "order": 2,
+   "role": "mechanism",
+   "status": "planned"
+  },
+  {
+   "from": "of-tree-split",
+   "to": "concept:decision-tree",
+   "kind": "part-of",
+   "order": 3,
+   "role": "algorithm",
+   "status": "published"
+  },
+  {
+   "from": "of-tree-predict",
+   "to": "concept:decision-tree",
+   "kind": "part-of",
+   "order": 4,
+   "role": "application",
+   "status": "planned"
+  },
+  {
+   "from": "of-tree-depth-overfit",
+   "to": "concept:decision-tree",
+   "kind": "part-of",
+   "order": 5,
+   "role": "pitfall",
+   "status": "planned"
+  },
+  {
+   "from": "of-regression-tree",
+   "to": "concept:decision-tree",
+   "kind": "part-of",
+   "order": 6,
+   "role": "extension",
+   "status": "planned"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-naive-bayes",
+   "kind": "related"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-logistic-regression",
    "kind": "related"
   }
  ]
