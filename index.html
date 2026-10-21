@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive Widgets</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="topbar">
+        <h1 data-i18n="app.title">Interactive Widgets</h1>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+        </div>
+      </div>
+      <p class="muted" data-i18n="app.subtitle">Teaching widgets by topic and concept</p>
+      <input id="search" type="search" data-i18n-placeholder="search.placeholder" placeholder="Search…" aria-label="Search">
+      <div class="muted" id="count"></div>
+      <div class="cards" id="cards" role="listbox" aria-label="Widgets"></div>
+    </aside>
+
+    <main class="main">
+      <section class="preview">
+        <div class="preview-mount" id="preview">
+          <div class="preview-placeholder" data-i18n="preview.empty">Select a widget to preview it</div>
+        </div>
+      </section>
+
+      <section class="preview embed" id="embed" hidden>
+        <strong data-i18n="embed.title">Embed code</strong>
+        <pre id="embed-code"></pre>
+        <div class="embed-actions">
+          <button type="button" id="copy" data-i18n="embed.copy">Copy</button>
+          <span class="muted" data-i18n="embed.fromState">Snippet reflects the widget's current state</span>
+        </div>
+      </section>
+
+      <section class="preview" id="meta" hidden>
+        <strong data-i18n="meta.title">Metadata</strong>
+        <dl class="meta" id="meta-list"></dl>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

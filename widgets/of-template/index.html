@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>of-template — standalone demo</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <style> body { padding: 24px; max-width: 760px; margin: auto; } .demo { display: grid; gap: 16px; } </style>
+</head>
+<body>
+  <div class="demo">
+    <p class="muted">Standalone demo — opens from <code>file://</code>, no server needed. Default config, then a custom one in Russian.</p>
+    <of-template lang="en"></of-template>
+    <of-template lang="ru" config='{"a": -2, "b": 3}'></of-template>
+    <p class="muted">Current config of the first widget (from <code>getConfig()</code> on every <code>change</code> event):</p>
+    <pre id="out">{}</pre>
+  </div>
+  <script type="module">
+    import './component.js';
+    const first = document.querySelector('of-template');
+    first.addEventListener('change', (e) => { document.getElementById('out').textContent = JSON.stringify(e.detail); });
+  </script>
+</body>
+</html>

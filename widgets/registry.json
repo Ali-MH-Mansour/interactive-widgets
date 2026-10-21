@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "vocabulary": {
+    "topics": ["machine-learning", "math-foundations", "programming", "artificial-intelligence"],
+    "domains": ["ml", "math", "programming", "ai"],
+    "languages": ["en", "ru"],
+    "statuses": ["published", "planned"]
+  },
+  "widgets": [
+    {
+      "id": "of-template",
+      "status": "published",
+      "title_i18n": { "en": "Line plot template (y = a·x + b)", "ru": "Шаблон: график прямой (y = a·x + b)" },
+      "description_i18n": {
+        "en": "The reference widget every new one is copied from: two sliders move a line on a plot and the equation updates live.",
+        "ru": "Эталонный виджет, с которого копируются новые: два ползунка двигают прямую на графике, уравнение обновляется сразу."
+      },
+      "topic": "math-foundations",
+      "concept": "linear-function",
+      "domains": ["math", "programming"],
+      "tags": ["template", "linear-function", "slope", "intercept"],
+      "prerequisites": [],
+      "difficulty": 1,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-template/preview.png"
+    }
+  ]
+}
