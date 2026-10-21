@@ -268,6 +268,46 @@
         "blobs": 4,
         "n": 80
       }
+    },
+    {
+      "id": "of-quantization",
+      "status": "published",
+      "title_i18n": {
+        "en": "Quantization: symmetric vs asymmetric",
+        "ru": "Квантование: симметричное и асимметричное"
+      },
+      "description_i18n": {
+        "en": "Round real values to a b-bit integer grid: switch symmetric (z = 0) and asymmetric (affine, zero-point) modes, change bits and data range, follow one probe value through scale, rounding, clamp and the error; MSE and unused levels live.",
+        "ru": "Округляйте вещественные значения до целочисленной сетки из b бит: переключайте симметричный (z = 0) и асимметричный (аффинный, нулевая точка) режимы, меняйте биты и диапазон данных, следите за одним пробным значением через масштаб, округление, clamp и ошибку; MSE и неиспользуемые уровни — вживую."
+      },
+      "topic": "machine-learning",
+      "concept": "quantization",
+      "domains": [
+        "ml",
+        "math"
+      ],
+      "tags": [
+        "quantization",
+        "int8",
+        "scale",
+        "zero-point",
+        "model-compression",
+        "inference"
+      ],
+      "prerequisites": [],
+      "difficulty": 2,
+      "version": "0.1.0",
+      "author": "Ali Mansour",
+      "created": "2026-10-21",
+      "preview": "widgets/of-quantization/preview.png",
+      "demo_config": {
+        "mode": "asymmetric",
+        "bits": 4,
+        "lo": 0,
+        "hi": 3,
+        "shape": "skewed",
+        "x": 2.4
+      }
     }
   ]
 }

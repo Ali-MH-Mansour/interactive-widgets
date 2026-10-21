@@ -68,6 +68,12 @@
    "topic": "machine-learning"
   },
   {
+   "id": "concept:quantization",
+   "kind": "concept",
+   "label": "quantization",
+   "topic": "machine-learning"
+  },
+  {
    "id": "of-template",
    "kind": "widget",
    "label": {
@@ -194,6 +200,25 @@
     "ml"
    ],
    "difficulty": 1,
+   "status": "published",
+   "version": "0.1.0",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-quantization",
+   "kind": "widget",
+   "label": {
+    "en": "Quantization: symmetric vs asymmetric",
+    "ru": "Квантование: симметричное и асимметричное"
+   },
+   "concept": "quantization",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 2,
    "status": "published",
    "version": "0.1.0",
    "explain": true,
@@ -344,6 +369,21 @@
   {
    "from": "of-kmeans-steps",
    "to": "of-tree-split",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:quantization",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:quantization",
+   "to": "of-quantization",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-quantization",
+   "to": "of-linear-fit",
    "kind": "related"
   }
  ]
