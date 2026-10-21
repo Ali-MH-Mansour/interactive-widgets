@@ -37,6 +37,25 @@ const KEBAB_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
+// Explanation (docs/explain-schema.md): widgets/<id>/explain.js, strict JSON between the markers,
+// every language, the required sections, links to known ids. Missing file = warning; broken file = error.
+const EXPLAIN_REQUIRED = ['summary', 'concept', 'how_to_use'];
+const explainLinks = [];
+function checkExplain(id) {
+  const file = path.join(ROOT, 'widgets', id, 'explain.js');
+  if (!fs.existsSync(file)) { warn.push(`${id}: widgets/${id}/explain.js missing (no explanation)`); return; }
+  const m = /\/\*\s*JSON-START\s*\*\/([\s\S]*?)\/\*\s*JSON-END\s*\*\//.exec(fs.readFileSync(file, 'utf8'));
+  if (!m) { err(id, 'explain.js has no JSON-START/JSON-END span'); return; }
+  let data;
+  try { data = JSON.parse(m[1]); } catch (e) { err(id, `explain.js JSON does not parse: ${e.message}`); return; }
+  if (data.id !== id) err(id, `explain.js id is "${data.id}"`);
+  for (const lang of LANGS) {
+    if (!data[lang] || typeof data[lang] !== 'object') { err(id, `explain.js lacks language ${lang}`); continue; }
+    for (const key of EXPLAIN_REQUIRED) if (!data[lang][key] || data[lang][key].length === 0) err(id, `explain.${lang} lacks ${key}`);
+    for (const l of data[lang].links || []) explainLinks.push([id, lang, l.id]);
+  }
+}
+
 const ids = new Set();
 const byId = new Map();
 
@@ -83,6 +102,7 @@ for (const w of reg.widgets) {
     else if (!fs.existsSync(path.join(ROOT, w.preview))) err(id, `preview "${w.preview}" not found`);
     const readme = path.join(ROOT, 'widgets', id, 'README.md');
     if (!fs.existsSync(readme)) warn.push(`${id}: widgets/${id}/README.md missing`);
+    checkExplain(id);
   }
 }
 
@@ -93,6 +113,7 @@ for (const w of reg.widgets) {
     if (p === w.id) err(w.id, 'widget lists itself as a prerequisite');
   }
 }
+for (const [id, lang, target] of explainLinks) if (!ids.has(target)) err(id, `explain.${lang} links to unknown widget "${target}"`);
 const visiting = new Set(); const done = new Set();
 function dfs(id, trail) {
   if (done.has(id)) return;

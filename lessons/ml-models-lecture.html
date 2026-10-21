@@ -12,50 +12,67 @@
     h2 { margin: 0; } p { margin: 0; color: var(--text-muted); }
     .lang-switch button[aria-pressed="true"] { background: var(--accent); color: #0f1216; border-color: var(--accent); }
     nav a { margin-inline-end: 12px; }
+    .explain-toggle { justify-self: end; font-size: 0.85rem; }
+    body.no-explain of-explain { display: none; }
   </style>
 </head>
 <body>
   <header>
     <h1>Regression → classification → trees → clustering</h1>
-    <div class="lang-switch" role="group" aria-label="Widget language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button></div>
+    <div class="lang-switch" role="group" aria-label="Widget language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" id="toggle-explain" class="explain-toggle" aria-pressed="true" title="Show or hide the explanations">Explanations</button></div>
   </header>
   <nav class="muted"><a href="#fit">1 Line + MSE</a><a href="#gd">2 Gradient descent</a><a href="#logit">3 Logistic regression</a><a href="#nb">4 Naive Bayes</a><a href="#tree">5 Decision tree</a><a href="#km">6 k-means</a></nav>
 
   <section id="fit"><h2>1. A model is a line; the error is MSE</h2>
     <p>Fit the line by hand. The residual bars are what the model gets wrong; MSE is their mean square. Then show the least-squares line: the best any line can do.</p>
-    <of-linear-fit lang="en"></of-linear-fit></section>
+    <of-linear-fit lang="en"></of-linear-fit>
+    <of-explain for="of-linear-fit" lang="en"></of-explain></section>
 
   <section id="gd"><h2>2. Gradient descent adjusts the weights</h2>
     <p>Instead of guessing w and b, compute the gradient of the MSE and step against it. Watch the update formula with real numbers, then raise η until it diverges.</p>
-    <of-gd-linear-regression lang="en"></of-gd-linear-regression></section>
+    <of-gd-linear-regression lang="en"></of-gd-linear-regression>
+    <of-explain for="of-gd-linear-regression" lang="en"></of-explain></section>
 
   <section id="logit"><h2>3. Logistic regression: learning to separate two classes</h2>
     <p>Same idea, different loss: the line is now a boundary, the sigmoid turns the score into a probability, and gradient descent on the log-loss rotates the line into place.</p>
-    <of-logistic-regression lang="en"></of-logistic-regression></section>
+    <of-logistic-regression lang="en"></of-logistic-regression>
+    <of-explain for="of-logistic-regression" lang="en"></of-explain></section>
 
   <section id="nb"><h2>4. Naive Bayes: classify by probabilities</h2>
-    <p>No boundary is learned directly: each class gets a mean and variance per feature, and Bayes' rule combines prior and likelihoods into a posterior for any point.</p>
-    <of-naive-bayes lang="en"></of-naive-bayes></section>
+    <p>No boundary is learned directly: each class gets a mean and variance per feature, and Bayes' rule combines prior and likelihoods into a posterior for any point. Tick "Show the calculation" to see every number derived.</p>
+    <of-naive-bayes lang="en"></of-naive-bayes>
+    <of-explain for="of-naive-bayes" lang="en" open="concept,computation,how"></of-explain></section>
 
   <section id="tree"><h2>5. Decision tree: split and gain</h2>
     <p>A tree asks threshold questions. Choose the root split yourself, read Gini or entropy of parent and children and the gain, then let the tree grow deeper.</p>
-    <of-tree-split lang="en" config='{"depth": 2}'></of-tree-split></section>
+    <of-tree-split lang="en" config='{"depth": 2}'></of-tree-split>
+    <of-explain for="of-tree-split" lang="en"></of-explain></section>
 
   <section id="km"><h2>6. k-means: clustering without labels</h2>
     <p>Two steps, alternating: assign points to the nearest centroid, move centroids to their means. Inertia only falls; restart to see a different local optimum.</p>
-    <of-kmeans-steps lang="en"></of-kmeans-steps></section>
+    <of-kmeans-steps lang="en"></of-kmeans-steps>
+    <of-explain for="of-kmeans-steps" lang="en"></of-explain></section>
 
+  <script src="../lib/of-explain.js"></script>
   <script src="../widgets/of-linear-fit/component.js"></script>
+  <script src="../widgets/of-linear-fit/explain.js"></script>
   <script src="../widgets/of-gd-linear-regression/component.js"></script>
+  <script src="../widgets/of-gd-linear-regression/explain.js"></script>
   <script src="../widgets/of-logistic-regression/component.js"></script>
+  <script src="../widgets/of-logistic-regression/explain.js"></script>
   <script src="../widgets/of-naive-bayes/component.js"></script>
+  <script src="../widgets/of-naive-bayes/explain.js"></script>
   <script src="../widgets/of-tree-split/component.js"></script>
+  <script src="../widgets/of-tree-split/explain.js"></script>
   <script src="../widgets/of-kmeans-steps/component.js"></script>
+  <script src="../widgets/of-kmeans-steps/explain.js"></script>
   <script>
-    document.querySelectorAll('.lang-switch button').forEach((b) => b.addEventListener('click', () => {
-      document.querySelectorAll('.lang-switch button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll('.lang-switch button[data-lang]').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('.lang-switch button[data-lang]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
       document.querySelectorAll('[lang]').forEach((el) => { if (el.tagName.startsWith('OF-')) el.setAttribute('lang', b.dataset.lang); });
     }));
+    const tg = document.getElementById('toggle-explain');
+    tg.addEventListener('click', () => { const on = tg.getAttribute('aria-pressed') !== 'true'; tg.setAttribute('aria-pressed', String(on)); document.body.classList.toggle('no-explain', !on); });
   </script>
 </body>
 </html>

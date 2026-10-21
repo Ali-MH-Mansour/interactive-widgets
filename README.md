@@ -32,12 +32,14 @@ do not need a server — open `widgets/of-template/index.html` directly to see o
 | `index.html` · `app.js` · `styles.css` | The library page: cards from the registry, EN/RU toggle, live preview, copy-embed snippet |
 | `i18n.json` | UI strings per language (`en`, `ru`; `ar` reserved) |
 | `widgets/registry.json` | The catalog — one entry per widget (hand-maintained; see `docs/registry-schema.md`) |
-| `widgets/of-<id>/` | One folder per published widget: `component.js`, `preview.png`, `README.md`, `index.html` (standalone demo) |
+| `widgets/of-<id>/` | One folder per published widget: `component.js`, `explain.js` (the learner-facing explanation, `docs/explain-schema.md`), `preview.png`, `README.md`, `index.html` (standalone demo) |
+| `lib/of-explain.js` | `<of-explain for="of-<id>">` — renders a widget's explanation anywhere (library page, lecture page, demo page) |
+| `graph.json` · `tools/build-graph.py` | The derived topic → concept → widget graph with prerequisite and related edges; regenerate, never edit |
 | `widgets/of-template/` | The reference widget every new one is copied from (a slider-driven line plot) |
 | `staging/` | Drafts awaiting approval, same folder shape as `widgets/` — see `docs/publish.md` |
 | `lessons/` | Lessons as JSON blocks (Phase 3) |
 | `tools/validate-registry.js` | `node tools/validate-registry.js` — schema and prerequisite check for the registry |
-| `docs/` | `widget-authoring.md` (the contract and template walkthrough), `registry-schema.md`, `publish.md` |
+| `docs/` | `widget-authoring.md` (the contract and template walkthrough), `registry-schema.md`, `explain-schema.md`, `publish.md` |
 
 ## Add a widget
 
@@ -49,9 +51,19 @@ do not need a server — open `widgets/of-template/index.html` directly to see o
 ## Embed a widget in any HTML page
 
 ```html
-<script type="module" src="widgets/of-template/component.js"></script>
+<script src="widgets/of-template/component.js"></script>
 <of-template lang="en" config='{"a": 1.5, "b": -0.5}'></of-template>
 ```
+
+With its explanation (concept, how it computes, how to use; EN/RU follows the `lang` attribute):
+
+```html
+<script src="lib/of-explain.js"></script>
+<script src="widgets/of-template/explain.js"></script>
+<of-explain for="of-template" lang="en"></of-explain>
+```
+
+The library page's **Embed code** box produces both blocks for the selected widget in its current state.
 
 ## Project registration
 
@@ -60,4 +72,4 @@ decision log) lives in the ASI OS activity `ACT-00069`; see `PROJECT.md`.
 
 ## Lecture pages
 
-`lessons/ml-models-lecture.html` — six widgets in teaching order (line + MSE → gradient descent → logistic regression → naive Bayes → decision tree → k-means), opens from `file://`, EN/RU toggle. Previews: `python tools/make-previews.py` (headless Edge/Chrome); demo pages: `python tools/gen-widget-pages.py`.
+`lessons/ml-models-lecture.html` — six widgets in teaching order (line + MSE → gradient descent → logistic regression → naive Bayes → decision tree → k-means), each with its explanation underneath (the **Explanations** button hides them for projection), opens from `file://`, EN/RU toggle. Previews: `python tools/make-previews.py` (headless Edge/Chrome); demo pages: `python tools/gen-widget-pages.py`.

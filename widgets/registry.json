@@ -189,7 +189,7 @@
       ],
       "prerequisites": [],
       "difficulty": 2,
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": "Ali Mansour",
       "created": "2026-10-21",
       "preview": "widgets/of-naive-bayes/preview.png",

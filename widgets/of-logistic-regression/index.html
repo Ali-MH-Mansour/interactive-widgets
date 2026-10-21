@@ -11,11 +11,14 @@
   <div class="demo">
     <p class="muted">Standalone demo — opens from <code>file://</code>, no server needed. Default config (EN), then a custom one (RU).</p>
     <of-logistic-regression lang="en"></of-logistic-regression>
+    <of-explain for="of-logistic-regression" lang="en"></of-explain>
     <of-logistic-regression lang="ru" config='{"w1": 0.2, "w2": -0.3, "b": 0, "lr": 1}'></of-logistic-regression>
     <p class="muted">Current config of the first widget (from <code>getConfig()</code> on every <code>change</code> event):</p>
     <pre id="out">{}</pre>
   </div>
+  <script src="../../lib/of-explain.js"></script>
   <script src="./component.js"></script>
+  <script src="./explain.js"></script>
   <script>
     const first = document.querySelector('of-logistic-regression');
     first.addEventListener('change', (e) => { document.getElementById('out').textContent = JSON.stringify(e.detail); });

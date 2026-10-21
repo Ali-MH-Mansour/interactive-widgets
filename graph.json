@@ -1,0 +1,350 @@
+{
+ "schema_version": "1.0.0",
+ "generated_from": [
+  "widgets/registry.json",
+  "widgets/*/explain.js"
+ ],
+ "nodes": [
+  {
+   "id": "topic:machine-learning",
+   "kind": "topic",
+   "label": "machine-learning"
+  },
+  {
+   "id": "topic:math-foundations",
+   "kind": "topic",
+   "label": "math-foundations"
+  },
+  {
+   "id": "topic:programming",
+   "kind": "topic",
+   "label": "programming"
+  },
+  {
+   "id": "topic:artificial-intelligence",
+   "kind": "topic",
+   "label": "artificial-intelligence"
+  },
+  {
+   "id": "concept:linear-function",
+   "kind": "concept",
+   "label": "linear-function",
+   "topic": "math-foundations"
+  },
+  {
+   "id": "concept:linear-regression",
+   "kind": "concept",
+   "label": "linear-regression",
+   "topic": "machine-learning"
+  },
+  {
+   "id": "concept:gradient-descent",
+   "kind": "concept",
+   "label": "gradient-descent",
+   "topic": "machine-learning"
+  },
+  {
+   "id": "concept:logistic-regression",
+   "kind": "concept",
+   "label": "logistic-regression",
+   "topic": "machine-learning"
+  },
+  {
+   "id": "concept:naive-bayes",
+   "kind": "concept",
+   "label": "naive-bayes",
+   "topic": "machine-learning"
+  },
+  {
+   "id": "concept:decision-tree",
+   "kind": "concept",
+   "label": "decision-tree",
+   "topic": "machine-learning"
+  },
+  {
+   "id": "concept:clustering",
+   "kind": "concept",
+   "label": "clustering",
+   "topic": "machine-learning"
+  },
+  {
+   "id": "of-template",
+   "kind": "widget",
+   "label": {
+    "en": "Line plot template (y = a·x + b)",
+    "ru": "Шаблон: график прямой (y = a·x + b)"
+   },
+   "concept": "linear-function",
+   "topic": "math-foundations",
+   "domains": [
+    "math",
+    "programming"
+   ],
+   "difficulty": 1,
+   "status": "published",
+   "version": "0.1.1",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-linear-fit",
+   "kind": "widget",
+   "label": {
+    "en": "Fit a line by hand: residuals and MSE",
+    "ru": "Подберите прямую вручную: остатки и MSE"
+   },
+   "concept": "linear-regression",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 1,
+   "status": "published",
+   "version": "0.1.0",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-gd-linear-regression",
+   "kind": "widget",
+   "label": {
+    "en": "Gradient descent learns a line",
+    "ru": "Градиентный спуск учит прямую"
+   },
+   "concept": "gradient-descent",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 2,
+   "status": "published",
+   "version": "0.1.0",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-logistic-regression",
+   "kind": "widget",
+   "label": {
+    "en": "Logistic regression: learning to separate",
+    "ru": "Логистическая регрессия: учимся разделять"
+   },
+   "concept": "logistic-regression",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 2,
+   "status": "published",
+   "version": "0.1.0",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-naive-bayes",
+   "kind": "widget",
+   "label": {
+    "en": "Naive Bayes classifier",
+    "ru": "Наивный байесовский классификатор"
+   },
+   "concept": "naive-bayes",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 2,
+   "status": "published",
+   "version": "0.1.1",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-tree-split",
+   "kind": "widget",
+   "label": {
+    "en": "Decision tree: split and gain",
+    "ru": "Дерево решений: разбиение и выигрыш"
+   },
+   "concept": "decision-tree",
+   "topic": "machine-learning",
+   "domains": [
+    "ml",
+    "math"
+   ],
+   "difficulty": 2,
+   "status": "published",
+   "version": "0.1.0",
+   "explain": true,
+   "explain_version": "0.1.0"
+  },
+  {
+   "id": "of-kmeans-steps",
+   "kind": "widget",
+   "label": {
+    "en": "k-means step by step",
+    "ru": "k-средних шаг за шагом"
+   },
+   "concept": "clustering",
+   "topic": "machine-learning",
+   "domains": [
+    "ml"
+   ],
+   "difficulty": 1,
+   "status": "published",
+   "version": "0.1.0",
+   "explain": true,
+   "explain_version": "0.1.0"
+  }
+ ],
+ "edges": [
+  {
+   "from": "topic:math-foundations",
+   "to": "concept:linear-function",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:linear-function",
+   "to": "of-template",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-template",
+   "to": "of-linear-fit",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:linear-regression",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:linear-regression",
+   "to": "of-linear-fit",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-linear-fit",
+   "to": "of-gd-linear-regression",
+   "kind": "related"
+  },
+  {
+   "from": "of-linear-fit",
+   "to": "of-logistic-regression",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:gradient-descent",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:gradient-descent",
+   "to": "of-gd-linear-regression",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-linear-fit",
+   "to": "of-gd-linear-regression",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "of-gd-linear-regression",
+   "to": "of-linear-fit",
+   "kind": "related"
+  },
+  {
+   "from": "of-gd-linear-regression",
+   "to": "of-logistic-regression",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:logistic-regression",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:logistic-regression",
+   "to": "of-logistic-regression",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-linear-fit",
+   "to": "of-logistic-regression",
+   "kind": "prerequisite"
+  },
+  {
+   "from": "of-logistic-regression",
+   "to": "of-gd-linear-regression",
+   "kind": "related"
+  },
+  {
+   "from": "of-logistic-regression",
+   "to": "of-naive-bayes",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:naive-bayes",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:naive-bayes",
+   "to": "of-naive-bayes",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-naive-bayes",
+   "to": "of-logistic-regression",
+   "kind": "related"
+  },
+  {
+   "from": "of-naive-bayes",
+   "to": "of-tree-split",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:decision-tree",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:decision-tree",
+   "to": "of-tree-split",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-tree-split",
+   "to": "of-logistic-regression",
+   "kind": "related"
+  },
+  {
+   "from": "of-tree-split",
+   "to": "of-naive-bayes",
+   "kind": "related"
+  },
+  {
+   "from": "topic:machine-learning",
+   "to": "concept:clustering",
+   "kind": "has-concept"
+  },
+  {
+   "from": "concept:clustering",
+   "to": "of-kmeans-steps",
+   "kind": "has-widget"
+  },
+  {
+   "from": "of-kmeans-steps",
+   "to": "of-naive-bayes",
+   "kind": "related"
+  },
+  {
+   "from": "of-kmeans-steps",
+   "to": "of-tree-split",
+   "kind": "related"
+  }
+ ]
+}

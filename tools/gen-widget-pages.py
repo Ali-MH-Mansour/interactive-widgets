@@ -24,11 +24,14 @@ PAGE = """<!DOCTYPE html>
   <div class="demo">
     <p class="muted">Standalone demo — opens from <code>file://</code>, no server needed. Default config (EN), then a custom one (RU).</p>
     <{id} lang="en"></{id}>
+    <of-explain for="{id}" lang="en"></of-explain>
     <{id} lang="ru" config='{custom}'></{id}>
     <p class="muted">Current config of the first widget (from <code>getConfig()</code> on every <code>change</code> event):</p>
     <pre id="out">{{}}</pre>
   </div>
+  <script src="../../lib/of-explain.js"></script>
   <script src="./component.js"></script>
+  <script src="./explain.js"></script>
   <script>
     const first = document.querySelector('{id}');
     first.addEventListener('change', (e) => {{ document.getElementById('out').textContent = JSON.stringify(e.detail); }});

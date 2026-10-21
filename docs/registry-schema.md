@@ -38,8 +38,10 @@ deliberate edit here, never an ad-hoc value on an entry.
 | `preview` | path | yes when published | Relative to the repo root; a 640×400 PNG of the default state. Must exist. |
 | `used_in` | string[] | no | Lesson ids that embed the widget (filled by the renderer in Phase 3). |
 
-Also required on disk for a `published` entry: `widgets/<id>/component.js` (error if missing) and
-`widgets/<id>/README.md` (warning if missing).
+Also required on disk for a `published` entry: `widgets/<id>/component.js` (error if missing),
+`widgets/<id>/README.md` (warning if missing) and `widgets/<id>/explain.js` (warning if missing; error if
+present but invalid — `docs/explain-schema.md`). The derived graph (`python tools/build-graph.py` →
+`graph.json`) is built from this registry plus the explanations; it is never edited by hand.
 
 ## Example
 

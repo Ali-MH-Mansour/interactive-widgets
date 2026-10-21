@@ -4,16 +4,20 @@
 (() => {
 const TAG = 'of-naive-bayes';
 
-const DEFAULT_CONFIG = Object.freeze({ x1: 0.5, x2: -0.5, n: 30, seed: 5, showRegions: true });
+const DEFAULT_CONFIG = Object.freeze({ x1: 0.5, x2: -0.5, n: 30, seed: 5, showRegions: true, showCalc: false });
 const R = 5;
 
 const I18N = {
   en: { title: 'Naive Bayes: prior × likelihood → posterior', hint: 'Each class is described by a mean and a variance per feature (independence is the "naive" part). Move the test point ✕ and see which class wins and why.',
         x1: 'Test point x1', x2: 'Test point x2', regions: 'Show decision regions', resample: 'New data',
-        cls: 'class', prior: 'P(c)', l1: 'p(x1|c)', l2: 'p(x2|c)', prod: 'product', post: 'P(c|x)', winner: 'prediction', mu: 'μ', sd: 'σ' },
+        cls: 'class', prior: 'P(c)', l1: 'p(x1|c)', l2: 'p(x2|c)', prod: 'product', post: 'P(c|x)', winner: 'prediction', mu: 'μ', sd: 'σ',
+        calc: 'Show the calculation', train: 'Training — count and average (once per data set)', predict: 'Prediction at the test point', norm: 'Normalise — divide by the sum so the posteriors add to 1',
+        points: 'points', meanOf: 'mean of', sdOf: 'spread of', wins: 'wins' },
   ru: { title: 'Наивный Байес: априорная × правдоподобие → апостериорная', hint: 'Каждый класс описан средним и дисперсией по каждому признаку (независимость — и есть «наивность»). Двигайте тестовую точку ✕ и смотрите, какой класс побеждает и почему.',
         x1: 'Тестовая точка x1', x2: 'Тестовая точка x2', regions: 'Показать области решения', resample: 'Новые данные',
-        cls: 'класс', prior: 'P(c)', l1: 'p(x1|c)', l2: 'p(x2|c)', prod: 'произведение', post: 'P(c|x)', winner: 'прогноз', mu: 'μ', sd: 'σ' },
+        cls: 'класс', prior: 'P(c)', l1: 'p(x1|c)', l2: 'p(x2|c)', prod: 'произведение', post: 'P(c|x)', winner: 'прогноз', mu: 'μ', sd: 'σ',
+        calc: 'Показать вычисление', train: 'Обучение — счёт и усреднение (один раз на набор данных)', predict: 'Предсказание в тестовой точке', norm: 'Нормировка — делим на сумму, чтобы апостериорные давали 1',
+        points: 'точек', meanOf: 'среднее', sdOf: 'разброс', wins: 'побеждает' },
 };
 
 const fmt = (n, d = 3) => Number(n).toFixed(d);
@@ -42,6 +46,8 @@ const STYLE = `
   th, td { padding: 3px 6px; border-block-end: 1px solid var(--border, #2a323d); text-align: start; } th { color: var(--text-muted, #9aa4b2); font-weight: normal; }
   td.post { color: var(--accent-2, #f9c74f); } .bar { display: inline-block; block-size: 8px; vertical-align: middle; border-radius: 4px; margin-inline-start: 6px; }
   .winner { margin-block-start: 6px; font-family: ui-monospace, Consolas, monospace; color: var(--accent-2, #f9c74f); }
+  .calc { margin-block-start: 8px; font-family: ui-monospace, Consolas, monospace; font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap; background: var(--bg-elev, #161b22); border-radius: 8px; padding: 8px 10px; }
+  .calc b { color: var(--accent-2, #f9c74f); font-weight: 600; } .calc .c0 { color: var(--accent-3, #f3722c); } .calc .c1 { color: var(--accent, #4cc9f0); }
 `;
 
 class OfNaiveBayes extends HTMLElement {
@@ -72,9 +78,9 @@ class OfNaiveBayes extends HTMLElement {
       <style>${STYLE}</style>
       <h2>${s.title}</h2><p class="hint">${s.hint}</p>
       <canvas aria-label="${s.title}" role="img"></canvas>
-      <div class="controls">${sl('x1')}${sl('x2')}<label class="check"><input type="checkbox" name="showRegions" ${c.showRegions ? 'checked' : ''}><span>${s.regions}</span></label><button type="button" name="resample">${s.resample}</button></div>
+      <div class="controls">${sl('x1')}${sl('x2')}<label class="check"><input type="checkbox" name="showRegions" ${c.showRegions ? 'checked' : ''}><span>${s.regions}</span></label><button type="button" name="resample">${s.resample}</button><label class="check"><input type="checkbox" name="showCalc" ${c.showCalc ? 'checked' : ''}><span>${s.calc}</span></label></div>
       <table aria-live="polite"><thead><tr><th>${s.cls}</th><th>${s.prior}</th><th>${s.l1} (${s.mu}, ${s.sd})</th><th>${s.l2} (${s.mu}, ${s.sd})</th><th>${s.prod}</th><th>${s.post}</th></tr></thead><tbody class="rows"></tbody></table>
-      <div class="winner"></div>`;
+      <div class="winner"></div><div class="calc" hidden></div>`;
     this.shadowRoot.querySelectorAll('input').forEach((el) => el.addEventListener('input', this._onInput));
     this.shadowRoot.querySelector('button[name="resample"]').addEventListener('click', () => { this._cfg.seed += 1; this._makeData(); this._scheduleDraw(); this._emit(); });
     this._scheduleDraw();
@@ -108,6 +114,20 @@ class OfNaiveBayes extends HTMLElement {
     this.shadowRoot.querySelector('.rows').innerHTML = rows.map((r, y) => `<tr><td style="color:${cols[y]}">${names[y]} ${y}</td><td>${fmt(r.prior, 2)}</td><td>${fmt(r.l1)} (${fmt(r.mu1, 1)}, ${fmt(r.sd1, 1)})</td><td>${fmt(r.l2)} (${fmt(r.mu2, 1)}, ${fmt(r.sd2, 1)})</td><td>${r.prod.toExponential(2)}</td><td class="post">${fmt(r.post)}<span class="bar" style="inline-size:${Math.round(r.post * 60)}px;background:${cols[y]}"></span></td></tr>`).join('');
     const win = rows[1].post > rows[0].post ? 1 : 0;
     this.shadowRoot.querySelector('.winner').textContent = `${s.winner}: ${s.cls} ${win}   (P(c|x) = P(c)·p(x1|c)·p(x2|c) / Σ)`;
+    const calc = this.shadowRoot.querySelector('.calc'); calc.hidden = !c.showCalc; if (c.showCalc) calc.innerHTML = this._calcHtml(rows, s);
+  }
+  // The arithmetic behind the table, with the live numbers substituted — the learner can check every cell.
+  _calcHtml(rows, s) {
+    const N = this._pts.length, c = this._cfg, f1 = (v) => fmt(v, 2), e2 = (v) => v.toExponential(2), SQ = Math.sqrt(2 * Math.PI).toFixed(3);
+    const lik = (x, mu, sd, l, k) => { const z = (x - mu) / sd, ex = Math.exp(-0.5 * z * z), nf = 1 / (sd * Math.sqrt(2 * Math.PI));
+      return `  p(${k}|c) = 1/(σ·√2π) · exp(−(${k} − μ)²/(2σ²)) = 1/(${f1(sd)}·${SQ}) · exp(−(${f1(x)} − ${f1(mu)})²/(2·${f1(sd)}²)) = ${fmt(nf)} · exp(−${f1(0.5 * z * z)}) = ${fmt(nf)} · ${fmt(ex)} = <b>${fmt(l)}</b>`; };
+    const cls = (y) => `<span class="c${y}">● ${s.cls} ${y}</span>`;
+    const train = rows.map((r, y) => { const P = this._pts.filter((p) => p.y === y), n = P.length;
+      return `${cls(y)}: n = ${n} ${s.points}, N = ${N} → P(${y}) = ${n}/${N} = <b>${f1(r.prior)}</b>\n  μ1 = ${s.meanOf} x1 = ${f1(r.mu1)},  σ1 = √(${s.meanOf} (x1 − μ1)²) = ${f1(r.sd1)};   μ2 = ${f1(r.mu2)},  σ2 = ${f1(r.sd2)}`; }).join('\n');
+    const pred = rows.map((r, y) => `${cls(y)}:\n${lik(c.x1, r.mu1, r.sd1, r.l1, 'x1')}\n${lik(c.x2, r.mu2, r.sd2, r.l2, 'x2')}\n  P(${y})·p(x1|${y})·p(x2|${y}) = ${f1(r.prior)} · ${fmt(r.l1)} · ${fmt(r.l2)} = <b>${e2(r.prod)}</b>`).join('\n');
+    const Z = rows[0].prod + rows[1].prod, win = rows[1].post > rows[0].post ? 1 : 0;
+    const norm = `Σ = ${e2(rows[0].prod)} + ${e2(rows[1].prod)} = ${e2(Z)}\n` + rows.map((r, y) => `  P(${y}|x) = ${e2(r.prod)} / ${e2(Z)} = <b>${fmt(r.post)}</b>`).join('\n') + `\n→ ${cls(win)} ${s.wins}`;
+    return `<b>1. ${s.train}</b>\n${train}\n\n<b>2. ${s.predict} x = (${f1(c.x1)}, ${f1(c.x2)})</b>\n${pred}\n\n<b>3. ${s.norm}</b>\n${norm}`;
   }
 }
 if (!customElements.get(TAG)) customElements.define(TAG, OfNaiveBayes);

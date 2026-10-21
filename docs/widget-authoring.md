@@ -28,8 +28,11 @@ everything else is the contract and should stay as it is.
    fonts, no CDN. Data is synthetic and seeded inside the widget (only CNN widgets bundle a tiny
    8×8 digits JSON in their own folder).
 9. **Ships with** `preview.png` (640×400, default state), `README.md` (pedagogical note: concept, what
-   to notice, misconceptions, config keys with defaults, prerequisites, changelog) and an
-   `index.html` standalone demo.
+   to notice, misconceptions, config keys with defaults, prerequisites, changelog), an
+   `index.html` standalone demo and **`explain.js`** — the learner-facing explanation (concept, formulas,
+   how the widget computes what it shows with the default numbers, how to use each control, what to
+   notice, misconceptions, related widgets) in every language, rendered by `<of-explain>`
+   (`docs/explain-schema.md`). Copy `widgets/of-template/explain.js`.
 10. **Has a registry entry** that passes `node tools/validate-registry.js`.
 
 ## Walkthrough: from the template to a new widget in under 30 minutes
@@ -49,6 +52,9 @@ everything else is the contract and should stay as it is.
 6. **Demo + preview** — open `staging/of-<id>/index.html` from `file://`, check both languages and a
    custom config; capture the default state as `preview.png` at 640×400.
 7. **README** — concept, what the learner should notice, misconceptions, config table, changelog.
+7a. **explain.js** — copy the template's, fill every section in `en` and `ru`; the `computation` steps must
+   quote the default-state numbers the widget actually prints, and each `how_to_use.control` must be a
+   control label as it appears in `I18N`. Check it on the demo page (step 6 renders it under the widget).
 8. **Registry** — add an entry (`status: "planned"` while in staging), run the validator.
 9. **Publish** per `docs/publish.md`.
 
@@ -61,6 +67,7 @@ everything else is the contract and should stay as it is.
 - [ ] Registry entry passes the validator: concept, topic, ≥1 domain, prerequisites, difficulty, version.
 - [ ] `preview.png` present, 640×400, default state.
 - [ ] `README.md` has the pedagogical note.
+- [ ] `explain.js` present, both languages, `computation` matches the default state; `node tools/validate-registry.js` reports no explain error.
 - [ ] No console errors or warnings in Chrome and Edge; every control works from the keyboard.
 - [ ] Works offline from `file://` and an intranet path with zero network requests.
 - [ ] Reviewed in staging and published with a version bump in the README changelog.

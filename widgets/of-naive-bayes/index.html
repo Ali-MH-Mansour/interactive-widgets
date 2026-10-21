@@ -11,11 +11,14 @@
   <div class="demo">
     <p class="muted">Standalone demo — opens from <code>file://</code>, no server needed. Default config (EN), then a custom one (RU).</p>
     <of-naive-bayes lang="en"></of-naive-bayes>
+    <of-explain for="of-naive-bayes" lang="en"></of-explain>
     <of-naive-bayes lang="ru" config='{"x1": -2, "x2": 2, "n": 50}'></of-naive-bayes>
     <p class="muted">Current config of the first widget (from <code>getConfig()</code> on every <code>change</code> event):</p>
     <pre id="out">{}</pre>
   </div>
+  <script src="../../lib/of-explain.js"></script>
   <script src="./component.js"></script>
+  <script src="./explain.js"></script>
   <script>
     const first = document.querySelector('of-naive-bayes');
     first.addEventListener('change', (e) => { document.getElementById('out').textContent = JSON.stringify(e.detail); });

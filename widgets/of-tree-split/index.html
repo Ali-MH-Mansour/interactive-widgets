@@ -11,11 +11,14 @@
   <div class="demo">
     <p class="muted">Standalone demo — opens from <code>file://</code>, no server needed. Default config (EN), then a custom one (RU).</p>
     <of-tree-split lang="en"></of-tree-split>
+    <of-explain for="of-tree-split" lang="en"></of-explain>
     <of-tree-split lang="ru" config='{"feature": 1, "threshold": 1, "depth": 3, "criterion": "entropy"}'></of-tree-split>
     <p class="muted">Current config of the first widget (from <code>getConfig()</code> on every <code>change</code> event):</p>
     <pre id="out">{}</pre>
   </div>
+  <script src="../../lib/of-explain.js"></script>
   <script src="./component.js"></script>
+  <script src="./explain.js"></script>
   <script>
     const first = document.querySelector('of-tree-split');
     first.addEventListener('change', (e) => { document.getElementById('out').textContent = JSON.stringify(e.detail); });

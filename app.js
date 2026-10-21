@@ -3,7 +3,7 @@
 // preview, builds the embed snippet from the widget's own getConfig(). Plain ES module, no deps.
 
 const LANG_KEY = 'iw.lang';
-const state = { lang: 'en', i18n: null, registry: null, selected: null, mounted: null };
+const state = { lang: 'en', i18n: null, registry: null, selected: null, mounted: null, explain: null };
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -103,10 +103,31 @@ async function mount(w) {
     el.addEventListener('change', updateEmbed);
     $('#embed').hidden = false;
     updateEmbed();
+    await mountExplain(w);
   } catch (err) {
     host.innerHTML = `<div class="preview-placeholder">${esc(String(err))}</div>`;
     $('#embed').hidden = true;
   }
+}
+
+// The explanation ships beside the component (widgets/<id>/explain.js, docs/explain-schema.md) and is
+// rendered by <of-explain>; both are classic scripts, so import() of them just runs them.
+async function mountExplain(w) {
+  const host = $('#explain-mount');
+  host.innerHTML = '';
+  state.explain = null;
+  try {
+    await import('./lib/of-explain.js');
+    await import(`./widgets/${w.id}/explain.js`);
+    const el = document.createElement('of-explain');
+    el.setAttribute('for', w.id);
+    el.setAttribute('lang', state.lang);
+    host.appendChild(el);
+    state.explain = el;
+  } catch (err) {
+    host.innerHTML = `<div class="preview-placeholder">${esc(t('explain.none'))}</div>`;
+  }
+  $('#explain').hidden = false;
 }
 
 function updateEmbed() {
@@ -114,9 +135,13 @@ function updateEmbed() {
   if (!w || !el) return;
   const cfg = typeof el.getConfig === 'function' ? el.getConfig() : {};
   const json = JSON.stringify(cfg).replace(/'/g, '&#39;');
+  // Classic scripts (not type="module"): the contract requires widgets to load from file://.
+  const hasExplain = !!(window.OF_EXPLAIN && window.OF_EXPLAIN[w.id]);
   $('#embed-code').textContent =
-    `<script type="module" src="widgets/${w.id}/component.js"></script>\n` +
-    `<${w.id} lang="${state.lang}" config='${json}'></${w.id}>`;
+    `<script src="widgets/${w.id}/component.js"></script>\n` +
+    (hasExplain ? `<script src="lib/of-explain.js"></script>\n<script src="widgets/${w.id}/explain.js"></script>\n` : '') +
+    `<${w.id} lang="${state.lang}" config='${json}'></${w.id}>` +
+    (hasExplain ? `\n<of-explain for="${w.id}" lang="${state.lang}"></of-explain>` : '');
 }
 
 function renderMeta(w) {
@@ -145,6 +170,7 @@ function setLang(lang) {
   renderCards();
   if (state.selected) renderMeta(state.selected);
   if (state.mounted) { state.mounted.setAttribute('lang', lang); updateEmbed(); }
+  if (state.explain) state.explain.setAttribute('lang', lang);
 }
 
 async function init() {

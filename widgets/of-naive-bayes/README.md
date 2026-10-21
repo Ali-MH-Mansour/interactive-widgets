@@ -19,8 +19,10 @@
 | `x1`, `x2` | `0.5`, `-0.5` | the test point |
 | `n`, `seed` | `30`, `5` | points (40 % class 0, 60 % class 1) and seed |
 | `showRegions` | `true` | draw the decision regions |
+| `showCalc` | `false` | unfold the arithmetic behind the table: priors, μ/σ, the Gaussian formula with numbers substituted, products, normalisation |
 
 Embed: `<script src="widgets/of-naive-bayes/component.js"></script> <of-naive-bayes lang="en"></of-naive-bayes>`
 
 ## Changelog
+- 0.1.1 (2026-10-21) — "Show the calculation" panel (`showCalc`): every table cell derived step by step with the live numbers; `explain.js` added.
 - 0.1.0 (2026-10-21) — first version.

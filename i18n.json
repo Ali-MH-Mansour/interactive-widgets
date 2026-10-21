@@ -14,6 +14,8 @@
     "embed.copy":       { "en": "Copy", "ru": "Копировать" },
     "embed.copied":     { "en": "Copied", "ru": "Скопировано" },
     "embed.fromState":  { "en": "Snippet reflects the widget's current state", "ru": "Фрагмент отражает текущее состояние виджета" },
+    "explain.title":    { "en": "Explanation", "ru": "Объяснение" },
+    "explain.none":     { "en": "No explanation yet for this widget", "ru": "Для этого виджета объяснения пока нет" },
     "meta.title":       { "en": "Metadata", "ru": "Метаданные" },
     "meta.id":          { "en": "ID", "ru": "ID" },
     "meta.topic":       { "en": "Topic", "ru": "Тема" },
