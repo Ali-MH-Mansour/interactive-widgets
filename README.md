@@ -37,7 +37,8 @@ do not need a server — open `widgets/of-template/index.html` directly to see o
 | `graph.json` · `tools/build-graph.py` | The derived topic → concept → widget graph with prerequisite and related edges; regenerate, never edit |
 | `widgets/of-template/` | The reference widget every new one is copied from (a slider-driven line plot) |
 | `staging/` | Drafts awaiting approval, same folder shape as `widgets/` — see `docs/publish.md` |
-| `lessons/` | Lessons as JSON blocks (Phase 3) |
+| `lessons/` | Lessons as JSON blocks (`<id>.json`, see `docs/lesson-schema.md`) plus their generated pages (`<id>.html`) |
+| `tools/render-lesson.js` | `node tools/render-lesson.js lessons/<id>.json [--inline] [--out f] [--lang l] [--check]` — renders a lesson to one standalone HTML page |
 | `tools/validate-registry.js` | `node tools/validate-registry.js` — schema and prerequisite check for the registry |
 | `docs/` | `widget-authoring.md` (the contract and template walkthrough), `registry-schema.md`, `explain-schema.md`, `publish.md` |
 
@@ -72,4 +73,4 @@ decision log) lives in the ASI OS activity `ACT-00069`; see `PROJECT.md`.
 
 ## Lecture pages
 
-`lessons/ml-models-lecture.html` — six widgets in teaching order (line + MSE → gradient descent → logistic regression → naive Bayes → decision tree → k-means), each with its explanation underneath (the **Explanations** button hides them for projection), opens from `file://`, EN/RU toggle. Previews: `python tools/make-previews.py` (headless Edge/Chrome); demo pages: `python tools/gen-widget-pages.py`.
+A lecture is written as JSON blocks in `lessons/<id>.json` and rendered by `node tools/render-lesson.js` to one standalone page (`docs/lesson-schema.md`). `lessons/ml-models-lecture.html` is the generated first lecture — six widgets in teaching order (line + MSE → gradient descent → logistic regression → naive Bayes → decision tree → k-means), each with an equation, its explanation underneath (the **Explanations** button hides them for projection) and a quick-check quiz; opens from `file://`, EN/RU switch without reload. `--inline --out <path>` produces a single self-contained file for a teaching folder. Previews: `python tools/make-previews.py` (headless Edge/Chrome); demo pages: `python tools/gen-widget-pages.py`.

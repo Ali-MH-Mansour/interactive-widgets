@@ -1,0 +1,90 @@
+{
+  "id": "ml-models-lecture",
+  "title_i18n": {
+    "en": "Regression → classification → trees → clustering",
+    "ru": "Регрессия → классификация → деревья → кластеризация"
+  },
+  "languages": ["en", "ru"],
+  "langDefault": "en",
+  "author": "Ali Mansour",
+  "created": "2026-10-21",
+  "blocks": [
+    { "type": "heading", "id": "fit", "text_i18n": { "en": "1. A model is a line; the error is MSE", "ru": "1. Модель — это прямая; ошибка — MSE" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "Fit the line by hand. The residual bars are what the model gets wrong; MSE is their mean square. Then show the least-squares line: the best any line can do.",
+      "ru": "Подберите прямую вручную. Столбики остатков — это то, в чём модель ошибается; MSE — их средний квадрат. Затем покажите МНК-прямую: лучшее, на что способна любая прямая." } },
+    { "type": "equation", "label_i18n": { "en": "mean squared error", "ru": "среднеквадратичная ошибка" }, "expr": "MSE = (1/n) Σ (y_i − (w·x_i + b))²" },
+    { "type": "widget", "widgetId": "of-linear-fit" },
+    { "type": "explain", "widgetId": "of-linear-fit" },
+    { "type": "quiz",
+      "question_i18n": { "en": "You move the line so that every residual bar gets shorter. What happens to MSE?", "ru": "Вы сдвигаете прямую так, что каждый столбик остатка становится короче. Что происходит с MSE?" },
+      "options_i18n": { "en": ["It falls", "It rises", "It cannot change — MSE depends only on the data"], "ru": ["Уменьшается", "Увеличивается", "Не меняется — MSE зависит только от данных"] },
+      "answer": 0,
+      "feedback_i18n": { "en": "MSE is the mean of the squared residuals, so shorter bars everywhere means a smaller MSE. The least-squares line is where it cannot fall any further.", "ru": "MSE — среднее квадратов остатков, поэтому короче столбики — меньше MSE. МНК-прямая — там, где она уже не может уменьшиться." } },
+
+    { "type": "heading", "id": "gd", "text_i18n": { "en": "2. Gradient descent adjusts the weights", "ru": "2. Градиентный спуск подбирает веса" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "Instead of guessing w and b, compute the gradient of the MSE and step against it. Watch the update formula with real numbers, then raise η until it diverges.",
+      "ru": "Вместо того чтобы угадывать w и b, вычислите градиент MSE и сделайте шаг против него. Проследите формулу обновления с реальными числами, затем увеличивайте η, пока спуск не разойдётся." } },
+    { "type": "equation", "label_i18n": { "en": "update rule", "ru": "правило обновления" }, "expr": "w ← w − η · ∂MSE/∂w        b ← b − η · ∂MSE/∂b" },
+    { "type": "widget", "widgetId": "of-gd-linear-regression" },
+    { "type": "explain", "widgetId": "of-gd-linear-regression" },
+    { "type": "quiz",
+      "question_i18n": { "en": "The learning rate η is made very large. What do you expect?", "ru": "Скорость обучения η сделали очень большой. Чего ожидать?" },
+      "options_i18n": { "en": ["Faster convergence, always", "The steps overshoot and the loss can grow — divergence", "Nothing: η only changes the direction of the step"], "ru": ["Всегда более быстрая сходимость", "Шаги перелетают минимум, и потеря может расти — расходимость", "Ничего: η меняет только направление шага"] },
+      "answer": 1,
+      "feedback_i18n": { "en": "η scales the step, not its direction. Past a threshold each step jumps over the minimum to a point with a larger loss, and the next step jumps even further.", "ru": "η масштабирует шаг, а не его направление. После порога каждый шаг перепрыгивает минимум в точку с большей потерей, а следующий — ещё дальше." } },
+
+    { "type": "heading", "id": "logit", "text_i18n": { "en": "3. Logistic regression: learning to separate two classes", "ru": "3. Логистическая регрессия: учимся разделять два класса" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "Same idea, different loss: the line is now a boundary, the sigmoid turns the score into a probability, and gradient descent on the log-loss rotates the line into place.",
+      "ru": "Та же идея, другая функция потерь: прямая теперь — граница, сигмоида превращает оценку в вероятность, а градиентный спуск по log-loss поворачивает прямую на место." } },
+    { "type": "equation", "label_i18n": { "en": "sigmoid", "ru": "сигмоида" }, "expr": "P(y = 1 | x) = σ(w·x + b) = 1 / (1 + e^(−(w·x + b)))" },
+    { "type": "widget", "widgetId": "of-logistic-regression" },
+    { "type": "explain", "widgetId": "of-logistic-regression" },
+    { "type": "quiz",
+      "question_i18n": { "en": "A point lies exactly on the boundary line. What probability does the model give it?", "ru": "Точка лежит ровно на границе. Какую вероятность даёт ей модель?" },
+      "options_i18n": { "en": ["0", "0.5", "1"], "ru": ["0", "0,5", "1"] },
+      "answer": 1,
+      "feedback_i18n": { "en": "On the boundary the score w·x + b is 0, and σ(0) = 0.5: the model is exactly undecided there.", "ru": "На границе оценка w·x + b равна 0, а σ(0) = 0,5: модель там ровно не определилась." } },
+
+    { "type": "heading", "id": "nb", "text_i18n": { "en": "4. Naive Bayes: classify by probabilities", "ru": "4. Наивный Байес: классификация по вероятностям" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "No boundary is learned directly: each class gets a mean and variance per feature, and Bayes' rule combines prior and likelihoods into a posterior for any point. Tick \"Show the calculation\" to see every number derived.",
+      "ru": "Граница не подбирается напрямую: каждый класс получает среднее и дисперсию по каждому признаку, а правило Байеса соединяет априорную вероятность и правдоподобия в апостериорную для любой точки. Включите «Show the calculation», чтобы увидеть вывод каждого числа." } },
+    { "type": "equation", "label_i18n": { "en": "Bayes' rule, naive", "ru": "правило Байеса, наивное" }, "expr": "P(c | x) ∝ P(c) · p(x₁ | c) · p(x₂ | c)" },
+    { "type": "widget", "widgetId": "of-naive-bayes" },
+    { "type": "explain", "widgetId": "of-naive-bayes", "open": "concept,computation,how" },
+    { "type": "quiz",
+      "question_i18n": { "en": "What does the word \"naive\" refer to?", "ru": "К чему относится слово «наивный»?" },
+      "options_i18n": { "en": ["The classifier ignores the prior P(c)", "The features are assumed independent given the class, so the likelihood is a product", "Only one feature is used"], "ru": ["Классификатор игнорирует априорную вероятность P(c)", "Признаки считаются независимыми при заданном классе, поэтому правдоподобие — произведение", "Используется только один признак"] },
+      "answer": 1,
+      "feedback_i18n": { "en": "The independence assumption is what lets p(x | c) split into p(x₁ | c) · p(x₂ | c). It is rarely true and still works well.", "ru": "Предположение о независимости и позволяет разложить p(x | c) в p(x₁ | c) · p(x₂ | c). Оно редко верно — и всё же работает." } },
+
+    { "type": "heading", "id": "tree", "text_i18n": { "en": "5. Decision tree: split and gain", "ru": "5. Дерево решений: разбиение и прирост" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "A tree asks threshold questions. Choose the root split yourself, read Gini or entropy of parent and children and the gain, then let the tree grow deeper.",
+      "ru": "Дерево задаёт пороговые вопросы. Выберите корневое разбиение сами, прочитайте Джини или энтропию родителя и потомков и прирост, затем дайте дереву вырасти глубже." } },
+    { "type": "equation", "label_i18n": { "en": "Gini impurity and gain", "ru": "неоднородность Джини и прирост" }, "expr": "G = 1 − Σ p_k²        gain = G_parent − (n_L/n)·G_L − (n_R/n)·G_R" },
+    { "type": "widget", "widgetId": "of-tree-split", "config": { "depth": 2 } },
+    { "type": "explain", "widgetId": "of-tree-split" },
+    { "type": "quiz",
+      "question_i18n": { "en": "A split sends all points of class A left and all of class B right. What is the Gini impurity of each child?", "ru": "Разбиение отправляет все точки класса A влево, а класса B — вправо. Какова неоднородность Джини каждого потомка?" },
+      "options_i18n": { "en": ["0 — each child is pure", "0.5 — the maximum for two classes", "It depends on the number of points"], "ru": ["0 — каждый потомок чист", "0,5 — максимум для двух классов", "Зависит от числа точек"] },
+      "answer": 0,
+      "feedback_i18n": { "en": "A pure node has p = 1 for one class, so G = 1 − 1² = 0. That split has the largest possible gain.", "ru": "В чистом узле p = 1 для одного класса, поэтому G = 1 − 1² = 0. У такого разбиения максимальный прирост." } },
+
+    { "type": "heading", "id": "km", "text_i18n": { "en": "6. k-means: clustering without labels", "ru": "6. k-средних: кластеризация без меток" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "Two steps, alternating: assign points to the nearest centroid, move centroids to their means. Inertia only falls; restart to see a different local optimum.",
+      "ru": "Два шага по очереди: отнести точки к ближайшему центроиду, сдвинуть центроиды в средние. Инерция только падает; перезапустите, чтобы увидеть другой локальный оптимум." } },
+    { "type": "equation", "label_i18n": { "en": "inertia (what k-means minimises)", "ru": "инерция (что минимизирует k-средних)" }, "expr": "J = Σ_k Σ_{x ∈ C_k} ‖x − μ_k‖²" },
+    { "type": "widget", "widgetId": "of-kmeans-steps" },
+    { "type": "explain", "widgetId": "of-kmeans-steps" },
+    { "type": "quiz",
+      "question_i18n": { "en": "Why can two runs of k-means on the same data end in different clusterings?", "ru": "Почему два запуска k-средних на одних данных могут закончиться разными кластеризациями?" },
+      "options_i18n": { "en": ["The data is re-sampled each run", "The starting centroids differ and the algorithm only finds a local optimum", "k changes between runs"], "ru": ["Данные пересэмплируются при каждом запуске", "Стартовые центроиды различаются, а алгоритм находит лишь локальный оптимум", "k меняется между запусками"] },
+      "answer": 1,
+      "feedback_i18n": { "en": "Each run decreases inertia monotonically from its own start, so it stops at the nearest local optimum — which depends on where the centroids began.", "ru": "Каждый запуск монотонно уменьшает инерцию от своего старта и останавливается в ближайшем локальном оптимуме — а он зависит от начальных центроидов." } }
+  ]
+}
