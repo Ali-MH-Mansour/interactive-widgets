@@ -161,6 +161,26 @@ if (fs.existsSync(conceptsFile)) {
   }
 }
 
+// Shell / content split (seam S2, docs/widget-authoring.md "Shell vs content"): explanation data lives
+// only in explain.js, and no shell file pulls a content path directly — everything goes through
+// lib/of-source.js. Long prose inside component.js is a warning (control labels are short).
+const CONTENT_PATHS = /fetch\([^)]*(registry\.json|concepts\.json|lessons\/|explain\.js|data\.json)/;
+const shellFiles = [path.join(ROOT, 'app.js'), ...fs.readdirSync(path.join(ROOT, 'lib')).filter((f) => f.endsWith('.js') && f !== 'of-source.js').map((f) => path.join(ROOT, 'lib', f))];
+for (const w of reg.widgets) if ((w.status ?? 'published') === 'published') shellFiles.push(path.join(ROOT, 'widgets', w.id, 'component.js'));
+for (const f of shellFiles) {
+  if (!fs.existsSync(f)) continue;
+  const rel = path.relative(ROOT, f).split(path.sep).join('/');
+  const src = fs.readFileSync(f, 'utf8');
+  if (/\bOF_EXPLAIN\s*\[/.test(src) && !/of-explain\.js$/.test(f)) err(rel, 'shell file writes/reads OF_EXPLAIN — explanation data belongs in explain.js, read via OF.source');
+  if (/JSON-START/.test(src)) err(rel, 'shell file carries a JSON-START content block — content belongs in explain.js');
+  if (CONTENT_PATHS.test(src)) err(rel, 'shell file fetches a content path directly — go through OF.source (lib/of-source.js)');
+  if (/\/component\.js$/.test(f)) {
+    const long = (src.match(/(["'`])(?:(?!\1)[^\\\n]|\\.){180,}\1/g) || []).length;
+    if (long) warn.push(`${rel}: ${long} string literal(s) longer than 180 characters — prose belongs in explain.js, the shell keeps labels`);
+  }
+}
+if (!fs.existsSync(path.join(ROOT, 'lib', 'of-source.js'))) err('lib', 'lib/of-source.js (the content provider) is missing');
+
 for (const w of warn) console.warn(`warning: ${w}`);
 if (errors.length) {
   for (const e of errors) console.error(`error: ${e}`);

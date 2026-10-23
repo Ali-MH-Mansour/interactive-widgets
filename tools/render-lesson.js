@@ -7,6 +7,10 @@
 //             so the single file can be copied anywhere (e.g. a teaching folder) and still work
 //   --check   validate only, write nothing
 //   --lang    language the page opens in (default: the lesson's langDefault); the switch still offers all
+//   --mode    local (default) | remote. RESERVED: `remote` is the platform's lesson page (content pulled
+//             through lib/of-source.js from the site API, Phase 6.1 build-site) and is refused until that
+//             exists. `--inline` is ALWAYS local by contract (seam S5): no <meta name="of-source">, no
+//             gate — the User's lecture copies work offline, forever, whatever the site does.
 //
 // Block types (docs/lesson-schema.md): heading, paragraph, equation, widget, explain, quiz.
 // Every text is i18n ({en, ru}); the page carries all languages and switches without reloading.
@@ -32,6 +36,10 @@ const outArg = flag('--out');
 const langArg = flag('--lang');
 const INLINE = flag('--inline') === true;
 const CHECK = flag('--check') === true;
+const MODE = flag('--mode') || 'local';
+if (!['local', 'remote'].includes(MODE)) { console.error(`--mode must be local or remote, not ${MODE}`); process.exit(2); }
+if (MODE === 'remote' && INLINE) { console.error('--inline is always local by contract (seam S5): it cannot be combined with --mode remote'); process.exit(2); }
+if (MODE === 'remote') { console.error('--mode remote is reserved for the platform build (Phase 6.1, tools/build-site.js); nothing renders in that mode yet'); process.exit(2); }
 const src = argv[0];
 if (!src) { console.error('usage: node tools/render-lesson.js lessons/<id>.json [--out <file>] [--inline] [--check]'); process.exit(2); }
 const srcPath = path.resolve(src);
@@ -148,8 +156,9 @@ lesson.blocks.forEach((b, i) => {
 });
 const main = sections.map((s) => `  <section${s.id ? ` id="${s.id}"` : ''}>\n    ${s.html.join('\n    ')}\n  </section>`).join('\n\n');
 
-// scripts: of-explain first, then component.js + explain.js per widget in order of first use
-const files = [path.join('lib', 'of-explain.js')];
+// scripts: the content provider (linked pages only — an --inline copy is local by contract and reads the
+// embedded explain.js without it), then of-explain, then component.js + explain.js per widget in order of first use
+const files = INLINE ? [path.join('lib', 'of-explain.js')] : [path.join('lib', 'of-source.js'), path.join('lib', 'of-explain.js')];
 for (const w of usedWidgets) files.push(path.join('widgets', w, 'component.js'), path.join('widgets', w, 'explain.js'));
 const rel = (p) => path.relative(path.dirname(outPath), path.join(ROOT, p)).split(path.sep).join('/');
 const scripts = files.map((f) => INLINE

@@ -1,6 +1,8 @@
 // Interactive Widgets — library page.
-// Reads widgets/registry.json and i18n.json, lists cards, mounts the selected widget as a live
-// preview, builds the embed snippet from the widget's own getConfig(). Plain ES module, no deps.
+// Reads i18n.json (UI strings = shell) directly and every piece of CONTENT — the registry, a widget's
+// explanation — through the provider lib/of-source.js (seam S1; `local` today, `remote` when the site is
+// published). Lists cards, mounts the selected widget as a live preview, builds the embed snippet from
+// the widget's own getConfig(). Plain ES module, no deps.
 
 const LANG_KEY = 'iw.lang';
 const state = { lang: 'en', i18n: null, registry: null, selected: null, mounted: null, explain: null };
@@ -118,7 +120,7 @@ async function mountExplain(w) {
   state.explain = null;
   try {
     await import('./lib/of-explain.js');
-    await import(`./widgets/${w.id}/explain.js`);
+    if (!(await window.OF.source.explain(w.id, state.lang))) throw new Error('no explanation');
     const el = document.createElement('of-explain');
     el.setAttribute('for', w.id);
     el.setAttribute('lang', state.lang);
@@ -136,10 +138,10 @@ function updateEmbed() {
   const cfg = typeof el.getConfig === 'function' ? el.getConfig() : {};
   const json = JSON.stringify(cfg).replace(/'/g, '&#39;');
   // Classic scripts (not type="module"): the contract requires widgets to load from file://.
-  const hasExplain = !!(window.OF_EXPLAIN && window.OF_EXPLAIN[w.id]);
+  const hasExplain = !!window.OF.source.explainSync(w.id);
   $('#embed-code').textContent =
     `<script src="widgets/${w.id}/component.js"></script>\n` +
-    (hasExplain ? `<script src="lib/of-explain.js"></script>\n<script src="widgets/${w.id}/explain.js"></script>\n` : '') +
+    (hasExplain ? `<script src="lib/of-source.js"></script>\n<script src="lib/of-explain.js"></script>\n<script src="widgets/${w.id}/explain.js"></script>\n` : '') +
     `<${w.id} lang="${state.lang}" config='${json}'></${w.id}>` +
     (hasExplain ? `\n<of-explain for="${w.id}" lang="${state.lang}"></of-explain>` : '');
 }
@@ -175,7 +177,11 @@ function setLang(lang) {
 
 async function init() {
   const saved = localStorage.getItem(LANG_KEY);
-  [state.i18n, state.registry] = await Promise.all([loadJson('i18n.json'), loadJson('widgets/registry.json')]);
+  await import('./lib/of-source.js');
+  // Seam S3: the gate runs once per page before any content is pulled; a no-op in local mode.
+  const g = await window.OF.source.gate();
+  if (!g.ok) throw new Error(window.OF.source.notice(saved || 'en'));
+  [state.i18n, state.registry] = await Promise.all([loadJson('i18n.json'), window.OF.source.registry()]);
   if (saved && state.i18n.languages.includes(saved)) state.lang = saved;
   applyStaticStrings();
   renderCards();

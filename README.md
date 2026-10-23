@@ -33,7 +33,9 @@ do not need a server — open `widgets/of-template/index.html` directly to see o
 | `i18n.json` | UI strings per language (`en`, `ru`; `ar` reserved) |
 | `widgets/registry.json` | The catalog — one entry per widget (hand-maintained; see `docs/registry-schema.md`) |
 | `widgets/of-<id>/` | One folder per published widget: `component.js`, `explain.js` (the learner-facing explanation, `docs/explain-schema.md`), `preview.png`, `README.md`, `index.html` (standalone demo) |
+| `lib/of-source.js` | **The content provider** — every consumer asks `OF.source` for the registry, kits, explanations, lessons, datasets; `local` today (static files), `remote` when published (site API + licence gate), switched by one `<meta name="of-source">` the site build writes. `docs/widget-authoring.md` → "Shell vs content" |
 | `lib/of-explain.js` | `<of-explain for="of-<id>">` — renders a widget's explanation anywhere (library page, lecture page, demo page) |
+| `docs/site-config.md` · `site.config.example.json` | What the (not yet built) platform build reads: domain, API base, mode, languages, licence, analytics, ad slots |
 | `graph.json` · `tools/build-graph.py` | The derived topic → concept → widget graph with prerequisite and related edges; regenerate, never edit |
 | `widgets/of-template/` | The reference widget every new one is copied from (a slider-driven line plot) |
 | `staging/` | Drafts awaiting approval, same folder shape as `widgets/` — see `docs/publish.md` |

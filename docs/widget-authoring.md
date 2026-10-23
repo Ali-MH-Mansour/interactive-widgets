@@ -35,6 +35,35 @@ everything else is the contract and should stay as it is.
    (`docs/explain-schema.md`). Copy `widgets/of-template/explain.js`.
 10. **Has a registry entry** that passes `node tools/validate-registry.js`.
 
+## Shell vs content (the line the publishing design depends on)
+
+The library is designed to be published later behind a server that holds the **content** while the
+browser holds the **shells** (seam S2 of the publishing design, 2026-10-23). The line is drawn where
+widgets are written, not at publish time, so every author keeps it from the first commit:
+
+| | Files | Where it lives when published |
+| --- | --- | --- |
+| **Shell** — code, math, drawing, control labels | `widgets/<id>/component.js`, `styles.css`, `lib/of-explain.js`, `app.js`, `i18n.json` (UI strings) | the browser (public, minified) |
+| **Content** — everything a learner reads or a widget is fed | `widgets/<id>/explain.js`, `widgets/<id>/data.json` (bundled datasets), `widgets/registry.json`, `widgets/concepts.json`, `lessons/*.json` | the server, fetched at run time through the provider |
+
+Rules the validator enforces:
+
+- **Explanatory prose never goes into `component.js`** — a string literal over 180 characters there is a
+  warning; an `OF_EXPLAIN` write or a `JSON-START` block there is an error. Labels, units, axis names and
+  short status readouts are shell; sentences are content and belong in `explain.js`.
+- **No shell file fetches a content path.** `fetch('widgets/registry.json')`, `fetch('lessons/…')` and the
+  like are errors outside `lib/of-source.js`. A consumer asks the provider: `OF.source.registry()`,
+  `OF.source.concepts()`, `OF.source.explain(id, lang)`, `OF.source.lesson(id)`, `OF.source.data(id)`.
+- **A widget that needs a dataset** ships it as `widgets/<id>/data.json` and reads it with
+  `OF.source.data('of-<id>')` (async; render a short placeholder until it resolves). Synthetic, seeded data
+  generated in code is shell and needs nothing.
+- **The gate.** `OF.source.gate()` runs once per page (the library page and `<of-explain>` call it); a widget
+  that pulls content should `await` it too. In `local` mode it is a no-op; in `remote` mode a failed gate
+  renders `OF.source.notice(lang)` instead of content.
+
+Pages built today carry no `<meta name="of-source">`, so the provider runs in `local` mode and behaves
+exactly as before. `--inline` lecture copies never carry the tag (seam S5).
+
 ## Walkthrough: from the template to a new widget in under 30 minutes
 
 1. **Copy** `widgets/of-template/` → `staging/of-<id>/`. Pick the id from the catalog (kebab-case,

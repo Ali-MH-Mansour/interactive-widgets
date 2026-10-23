@@ -1,0 +1,15 @@
+{
+  "$comment": "Copy to site.config.json on the build machine and fill in. Shape: docs/site-config.md. Nothing here is read by the library today; Phase 6.1 (tools/build-site.js) will.",
+  "name": "<platform name — RE02>",
+  "domain": "example.org",
+  "mode": "remote",
+  "apiBase": "https://example.org/api",
+  "languages": ["en", "ru", "ar"],
+  "langDefault": "en",
+  "licence": { "content": "CC BY-NC-ND 4.0", "code": "proprietary — for use on this site only", "heartbeatMinutes": 30 },
+  "analytics": null,
+  "ads": null,
+  "consent": { "banner": true, "privacyUrl": "/privacy", "termsUrl": "/terms" },
+  "video": { "embedHost": "www.youtube-nocookie.com", "facade": true },
+  "build": { "outDir": "dist/", "minify": true }
+}
