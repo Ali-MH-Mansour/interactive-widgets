@@ -1,0 +1,42 @@
+{
+  "id": "quantization",
+  "title_i18n": {
+    "en": "Quantization: storing a model in fewer bits",
+    "ru": "Квантование: модель в меньшем числе бит"
+  },
+  "languages": ["en", "ru"],
+  "langDefault": "en",
+  "author": "Ali Mansour",
+  "created": "2026-10-23",
+  "blocks": [
+    { "type": "heading", "id": "why", "text_i18n": { "en": "1. Why quantize at all", "ru": "1. Зачем вообще квантовать" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "A trained network is millions of float32 numbers, 32 bits each, most of them inside a narrow range. Quantization replaces every number by the index of the nearest level on a small integer grid — 8 bits, or fewer — so the model takes a quarter of the memory and runs on integer hardware. The price is a rounding error per value; the design question is how to lay the grid so that error stays small.",
+      "ru": "Обученная сеть — это миллионы чисел float32 по 32 бита, большинство из них лежит в узком диапазоне. Квантование заменяет каждое число индексом ближайшего уровня на небольшой целочисленной сетке — 8 бит или меньше, — так что модель занимает в четыре раза меньше памяти и работает на целочисленном оборудовании. Цена — ошибка округления на каждое значение; вопрос проектирования — как расположить сетку, чтобы эта ошибка оставалась малой." } },
+    { "type": "equation", "label_i18n": { "en": "quantize and dequantize", "ru": "квантование и деквантование" }, "expr": "q = clamp( round(x / s) + z , q_min, q_max )        x̂ = s · (q − z)" },
+
+    { "type": "heading", "id": "modes", "text_i18n": { "en": "2. Symmetric or asymmetric: where the grid sits", "ru": "2. Симметричное или асимметричное: где стоит сетка" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "Two numbers define the grid: the scale s (distance between levels) and the zero-point z (the integer that stands for 0). Symmetric quantization centres the grid on zero, so z = 0 and the arithmetic is a plain multiply — but half the grid is wasted when the data never go negative. Asymmetric quantization fits the grid to [min, max] of the data and shifts it by z, so every level lies where values actually are. Flip the mode in the widget with the same data and compare the scale and the MSE.",
+      "ru": "Сетку задают два числа: масштаб s (расстояние между уровнями) и нулевая точка z (целое, изображающее 0). Симметричное квантование центрирует сетку в нуле, так что z = 0 и арифметика — обычное умножение, но половина сетки пропадает, если данные никогда не отрицательны. Асимметричное квантование подгоняет сетку под [min, max] данных и сдвигает её на z, так что каждый уровень лежит там, где действительно есть значения. Переключите режим в виджете на тех же данных и сравните масштаб и MSE." } },
+    { "type": "equation", "label_i18n": { "en": "the two grids", "ru": "две сетки" }, "expr": "symmetric:  s = max|x| / (2^(b−1) − 1),  z = 0        asymmetric:  s = (max − min) / (2^b − 1),  z = round(−min / s)" },
+    { "type": "widget", "widgetId": "of-quantization" },
+    { "type": "explain", "widgetId": "of-quantization", "open": "concept,computation" },
+    { "type": "quiz",
+      "question_i18n": { "en": "The data are ReLU outputs, all in [0, 3]. At the same bit width, which mode gives the smaller rounding error, and why?", "ru": "Данные — выходы ReLU, все в [0, 3]. При той же разрядности какой режим даёт меньшую ошибку округления и почему?" },
+      "options_i18n": { "en": ["Symmetric — its levels are signed, so it has more of them", "Asymmetric — all its levels lie inside [0, 3], so the scale s is about half", "Neither — the error depends only on the number of bits"], "ru": ["Симметричный — его уровни со знаком, поэтому их больше", "Асимметричный — все его уровни лежат внутри [0, 3], поэтому масштаб s примерно вдвое меньше", "Ни один — ошибка зависит только от числа бит"] },
+      "answer": 1,
+      "feedback_i18n": { "en": "The symmetric grid spans [−3, 3] and leaves the negative half empty; the asymmetric grid spans exactly [0, 3] with the same 2^b levels, so its spacing — and the error, which is at most s/2 — is roughly halved.", "ru": "Симметричная сетка занимает [−3, 3], и её отрицательная половина пуста; асимметричная занимает ровно [0, 3] теми же 2^b уровнями, поэтому её шаг — и ошибка, не превышающая s/2, — примерно вдвое меньше." } },
+
+    { "type": "heading", "id": "range", "text_i18n": { "en": "3. Bits, range and outliers", "ru": "3. Биты, диапазон и выбросы" } },
+    { "type": "paragraph", "text_i18n": {
+      "en": "Each extra bit halves the scale and quarters the mean squared error. But the range matters as much as the bits: one large outlier stretches the grid and coarsens it for every other value, and a value outside the grid is clipped (saturation). That is why the range is calibrated from the data, and why clipping a few extremes on purpose can lower the total error. In the widget, drag the data maximum alone and watch every other error bar grow.",
+      "ru": "Каждый дополнительный бит вдвое уменьшает масштаб и вчетверо — среднеквадратичную ошибку. Но диапазон важен не меньше битов: один большой выброс растягивает сетку и делает её грубее для всех остальных значений, а значение за пределами сетки обрезается (насыщение). Поэтому диапазон калибруют по данным, а намеренное обрезание нескольких крайних значений может снизить суммарную ошибку. В виджете сдвиньте только максимум данных и посмотрите, как растут остальные столбики ошибок." } },
+    { "type": "equation", "label_i18n": { "en": "error bound", "ru": "граница ошибки" }, "expr": "|x − x̂| ≤ s / 2  inside the grid        MSE ≈ s² / 12  for spread-out data" },
+    { "type": "quiz",
+      "question_i18n": { "en": "You go from 4 to 6 bits with the same data range. Roughly what happens to the MSE?", "ru": "Вы переходите с 4 на 6 бит при том же диапазоне данных. Что примерно происходит с MSE?" },
+      "options_i18n": { "en": ["It halves", "It falls by about 16×", "It falls by about 4×"], "ru": ["Уменьшается вдвое", "Падает примерно в 16 раз", "Падает примерно в 4 раза"] },
+      "answer": 1,
+      "feedback_i18n": { "en": "Two more bits means four times as many levels, so s is divided by 4 and MSE ≈ s²/12 is divided by 16.", "ru": "Два лишних бита — вчетверо больше уровней, поэтому s делится на 4, а MSE ≈ s²/12 — на 16." } }
+  ]
+}

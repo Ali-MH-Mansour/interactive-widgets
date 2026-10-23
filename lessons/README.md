@@ -11,3 +11,4 @@ self-contained file that works from any folder.
 | Lesson | Widgets | Page |
 | --- | --- | --- |
 | `ml-models-lecture.json` — regression → classification → trees → clustering (EN/RU, 6 sections, 6 quizzes) | of-linear-fit · of-gd-linear-regression · of-logistic-regression · of-naive-bayes · of-tree-split · of-kmeans-steps | `ml-models-lecture.html` |
+| `quantization.json` — why quantize · symmetric vs asymmetric · bits, range and outliers (EN/RU, 3 sections, 2 quizzes); a short standalone lesson for any ML or AI course | of-quantization | `quantization.html` |
